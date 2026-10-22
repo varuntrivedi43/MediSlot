@@ -1,0 +1,10 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 16px;
+}
+
+header {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 16px;
+}
