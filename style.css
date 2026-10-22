@@ -45,3 +45,8 @@ a {
     text-decoration: none;
 }
 
+.slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
