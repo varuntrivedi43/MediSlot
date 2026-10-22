@@ -8,3 +8,14 @@ header {
     border-bottom: 1px solid #ddd;
     margin-bottom: 16px;
 }
+
+.doctor-list {
+    display: flex;
+    gap: 16px;
+}
+
+.doctor-list section {
+    border: 1px solid #eee;
+    padding: 12px;
+    width: 220px;
+}
