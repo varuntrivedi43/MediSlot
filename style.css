@@ -23,7 +23,7 @@ header {
     border-radius: 8px;
 }
 
-button {
+.primary-btn {
     padding: 8px 12px;
     background: black;
     color: white;
@@ -31,7 +31,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.primary-btn:hover {
     background: gray;
 }
 
@@ -49,4 +49,9 @@ a {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+}
+
+.slot-selected {
+    background: gray;
+    color: white;
 }
