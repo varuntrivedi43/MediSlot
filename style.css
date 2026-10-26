@@ -72,3 +72,16 @@ nav a {
 nav a:hover {
     background: lightgray;
 }
+
+.booking-form {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+    max-width: 320px; 
+}
+
+.booking-form input {
+    padding: 8px;
+    border: 1px olid lightgray;
+    border-radius: 6px;
+}
