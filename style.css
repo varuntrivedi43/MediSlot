@@ -82,6 +82,12 @@ nav a:hover {
 
 .booking-form input {
     padding: 8px;
-    border: 1px olid lightgray;
+    border: 1px solid lightgray;
     border-radius: 6px;
+}
+
+#booking-message {
+    min-height: 20px;
+    margin-top: 10px;
+    font-weight: bold;
 }

@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", function() {
+
 const params = new URLSearchParams(window.location.search);
 const doctor = params.get("doctor");
 
@@ -38,3 +40,17 @@ for (const btn of buttons) {
         selectedBtn = btn;
     });
 }
+
+const form = document.querySelector(".booking-form");
+const message = document.querySelector("#booking-message");
+
+form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const name = document.querySelector("#fullName").value;
+    const phone = document.querySelector("#phone").value;
+
+    message.textContent = "Booking request for " + name + " (" + phone + ") received.";
+});
+
+});
