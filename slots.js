@@ -28,10 +28,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    const form = document.querySelector(".booking-form");
+    const message = document.querySelector("#booking-message");
+
     for (const btn of buttons) {
         btn.addEventListener("click", function() {
             output.textContent = "Selected slot: " + btn.textContent;
             confirmBtn.disabled = false;
+            message.textContent = "";
+            message.classList.remove("msg-error", "msg-success");
             const p = new URLSearchParams(window.location.search);
             p.set("slot", btn.textContent);
             window.history.replaceState({}, "", "?" + p.toString()); 
@@ -45,17 +50,21 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    const form = document.querySelector(".booking-form");
-    const message = document.querySelector("#booking-message");
-
     form.addEventListener("submit", function (event) {
         event.preventDefault();
+        
+        message.classList.remove("msg-error", "msg-success");
+
+        const currentSlot = new URLSearchParams(window.location.search).get("slot");
+
+        if (!currentSlot) {
+            message.classList.add("msg-error");
+            message.textContent = "Please select a slot first.";
+            return;
+        }
 
         const name = document.querySelector("#fullName").value;
         const phone = document.querySelector("#phone").value;
-
-        message.classList.remove("msg-error", "msg-success");
-
         const cleanPhone = phone.trim();
 
         if (cleanPhone.length !== 10) {
@@ -65,7 +74,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         message.classList.add("msg-success");
-        message.textContent = "Booking request for " + name + " (" + cleanPhone + ") received."; 
+        message.textContent = "Booking request for " + name + " (" + cleanPhone + ") at " + currentSlot + " received.";
+        form.reset();
     });
 
 });
