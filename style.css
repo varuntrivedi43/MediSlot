@@ -7,6 +7,9 @@ body {
 header {
     border-bottom: 1px solid #ddd;
     margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .doctor-list {
@@ -54,4 +57,18 @@ a {
 .slot-selected {
     background: gray;
     color: white;
+}
+
+nav {
+    display: flex;
+    gap: 12px;
+}
+
+nav a {
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+nav a:hover {
+    background: lightgray;
 }
