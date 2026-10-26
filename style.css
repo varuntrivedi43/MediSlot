@@ -91,3 +91,11 @@ nav a:hover {
     margin-top: 10px;
     font-weight: bold;
 }
+
+.msg-error {
+    color: darkred;
+}
+
+.msg-success {
+    color: darkgreen;
+}

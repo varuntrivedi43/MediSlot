@@ -50,7 +50,18 @@ form.addEventListener("submit", function (event) {
     const name = document.querySelector("#fullName").value;
     const phone = document.querySelector("#phone").value;
 
-    message.textContent = "Booking request for " + name + " (" + phone + ") received.";
+    message.classList.remove("msg-error", "msg-success");
+
+    const cleanPhone = phone.trim();
+
+    if (cleanPhone.length !== 10) {
+        message.classList.add("msg-error");
+        message.textContent = "Phone must be exactly 10 digits.";
+        return;
+    }
+
+    message.classList.add("msg-success");
+    message.textContent = "Booking request for " + name + " (" + cleanPhone + ") received."; 
 });
 
 });
