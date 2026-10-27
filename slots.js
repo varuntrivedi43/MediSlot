@@ -14,6 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const doctorName = doctor ? doctor.name : "Unknown Doctor";
 
+  const slotsList = document.querySelector("#slots-list");
+
+    if (doctor && slotsList) {
+        let slotsHtml = "";
+
+        for (const s of doctor.slots) {
+            slotsHtml += `<button type="button">${s}</button>`;
+        }
+
+        slotsList.innerHTML = slotsHtml;
+    }
+
   // Back link
   const backLink = document.querySelector("#back-link");
   if (doctorId) {

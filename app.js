@@ -1,10 +1,17 @@
-const buttons = document.querySelectorAll(".view-slots");
+document.addEventListener("DOMContentLoaded", function () {
+  const buttons = document.querySelectorAll(".view-slots");
 
-for (const btn of buttons) {
-    btn.addEventListener("click", function(event) {
-        event.stopPropagation();
-        const doctorName = btn.dataset.doctor;
-        const url = "slots.html?doctor=" + encodeURIComponent(doctorName);
-        window.location.href = url; 
+  for (const btn of buttons) {
+    btn.addEventListener("click", function (event) {
+      // Stop the <a> link click
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Read doctor id from: data-doctor-id="d1"
+      const doctorId = btn.dataset.doctorId;
+
+      // Go to slots page using id
+      window.location.href = "slots.html?id=" + encodeURIComponent(doctorId);
     });
-}
+  }
+});
