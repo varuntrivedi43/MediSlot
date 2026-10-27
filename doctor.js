@@ -24,3 +24,10 @@ else {
     specLine.textContent = "Specialty: Unknown";
     expLine.textContent = "Experience: Unknown";
 }
+
+const viewSlotsBtn = document.querySelector("#view-slots-btn");
+
+viewSlotsBtn.addEventListener("click", function() {
+    const url = "slots.html?doctor=" + encodeURIComponent(name);
+    window.location.href = url;
+});

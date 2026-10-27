@@ -5,6 +5,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const params = new URLSearchParams(window.location.search);
     const doctor = params.get("doctor");
 
+    const backLink = document.querySelector("#back-link");
+
+    if (doctor) {
+        backLink.href = "doctor.html?name=" + encodeURIComponent(doctor);
+        backLink.textContent = "← Back to Doctor Details";
+    }
+    
+    else {
+        backLink.href = "index.html";
+        backLink.textContent = "← Back to Doctors";
+    }
+
     const doctorLine = document.querySelector("#doctor-name");
     doctorLine.textContent = "Doctor: " + (doctor || "Unknown");
 
