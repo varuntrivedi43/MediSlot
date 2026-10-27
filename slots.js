@@ -63,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        const currentDoctor = new URLSearchParams(window.location.search).get("doctor") || "Unknown";
+
         const name = document.querySelector("#fullName").value;
         const phone = document.querySelector("#phone").value;
         const cleanPhone = phone.trim();
@@ -74,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         message.classList.add("msg-success");
-        message.textContent = "Booking request for " + name + " (" + cleanPhone + ") at " + currentSlot + " received.";
+        message.textContent = "Booking request for " + name + " (" + cleanPhone + ") with " + currentDoctor + " at " + currentSlot + " received.";
         form.reset();
     });
 
