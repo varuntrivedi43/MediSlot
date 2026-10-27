@@ -99,3 +99,9 @@ nav a:hover {
 .msg-success {
     color: darkgreen;
 }
+
+.card-link {
+    text-decoration : none;
+    color: inherit;
+    display: block;
+}

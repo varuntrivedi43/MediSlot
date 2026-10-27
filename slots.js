@@ -1,95 +1,103 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+  const confirmBtn = document.querySelector("#confirm-booking");
+  confirmBtn.disabled = true;
 
-    const confirmBtn = document.querySelector("#confirm-booking");
-    confirmBtn.disabled = true;
-    const params = new URLSearchParams(window.location.search);
-    const doctor = params.get("doctor");
+  const params = new URLSearchParams(window.location.search);
 
-    const backLink = document.querySelector("#back-link");
+  // We now use doctor ID in the URL: slots.html?id=d1
+  const doctorId = params.get("id");
 
-    if (doctor) {
-        backLink.href = "doctor.html?name=" + encodeURIComponent(doctor);
-        backLink.textContent = "← Back to Doctor Details";
-    }
-    
-    else {
-        backLink.href = "index.html";
-        backLink.textContent = "← Back to Doctors";
-    }
+  // Find the doctor object from data.js
+  const doctor = doctors.find(function (d) {
+    return d.id === doctorId;
+  });
 
-    const doctorLine = document.querySelector("#doctor-name");
-    doctorLine.textContent = "Doctor: " + (doctor || "Unknown");
+  const doctorName = doctor ? doctor.name : "Unknown Doctor";
 
-    const output = document.querySelector("#selected-slot");
-    const buttons = document.querySelectorAll(".slots button");
-    const slot = params.get("slot");
-    let selectedBtn = null;
+  // Back link
+  const backLink = document.querySelector("#back-link");
+  if (doctorId) {
+    backLink.href = "doctor.html?id=" + encodeURIComponent(doctorId);
+    backLink.textContent = "← Back to Doctor Details";
+  } else {
+    backLink.href = "index.html";
+    backLink.textContent = "← Back to Doctors";
+  }
 
-    if (slot) {
-        output.textContent = "Selected slot: " + slot;
-        confirmBtn.disabled = false;
-    }
+  // Doctor line on page
+  const doctorLine = document.querySelector("#doctor-name");
+  doctorLine.textContent = "Doctor: " + doctorName;
 
-    if (slot) {
-        for (const btn of buttons) {
-            if (btn.textContent === slot) {
-                btn.classList.add("slot-selected");
-                selectedBtn = btn;
-                break;
-            }
-        }
-    }
+  // Slot selection
+  const output = document.querySelector("#selected-slot");
+  const buttons = document.querySelectorAll(".slots button");
+  const slot = params.get("slot");
+  let selectedBtn = null;
 
-    const form = document.querySelector(".booking-form");
-    const message = document.querySelector("#booking-message");
+  // Restore selected slot from URL on refresh
+  if (slot) {
+    output.textContent = "Selected slot: " + slot;
+    confirmBtn.disabled = false;
 
     for (const btn of buttons) {
-        btn.addEventListener("click", function() {
-            output.textContent = "Selected slot: " + btn.textContent;
-            confirmBtn.disabled = false;
-            message.textContent = "";
-            message.classList.remove("msg-error", "msg-success");
-            const p = new URLSearchParams(window.location.search);
-            p.set("slot", btn.textContent);
-            window.history.replaceState({}, "", "?" + p.toString()); 
+      if (btn.textContent === slot) {
+        btn.classList.add("slot-selected");
+        selectedBtn = btn;
+        break;
+      }
+    }
+  }
 
-            if (selectedBtn) {
-                selectedBtn.classList.remove("slot-selected");
-            }
+  const form = document.querySelector(".booking-form");
+  const message = document.querySelector("#booking-message");
 
-            btn.classList.add("slot-selected");
-            selectedBtn = btn;
-        });
+  for (const btn of buttons) {
+    btn.addEventListener("click", function () {
+      output.textContent = "Selected slot: " + btn.textContent;
+      confirmBtn.disabled = false;
+
+      message.textContent = "";
+      message.classList.remove("msg-error", "msg-success");
+
+      // Update URL without reloading the page
+      const p = new URLSearchParams(window.location.search);
+      p.set("slot", btn.textContent);
+      window.history.replaceState({}, "", "?" + p.toString());
+
+      if (selectedBtn) {
+        selectedBtn.classList.remove("slot-selected");
+      }
+
+      btn.classList.add("slot-selected");
+      selectedBtn = btn;
+    });
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    message.classList.remove("msg-error", "msg-success");
+
+    const currentSlot = new URLSearchParams(window.location.search).get("slot");
+
+    if (!currentSlot) {
+      message.classList.add("msg-error");
+      message.textContent = "Please select a slot first.";
+      return;
     }
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        
-        message.classList.remove("msg-error", "msg-success");
+    const name = document.querySelector("#fullName").value;
+    const phone = document.querySelector("#phone").value;
+    const cleanPhone = phone.trim();
 
-        const currentSlot = new URLSearchParams(window.location.search).get("slot");
+    if (cleanPhone.length !== 10) {
+      message.classList.add("msg-error");
+      message.textContent = "Phone must be exactly 10 digits.";
+      return;
+    }
 
-        if (!currentSlot) {
-            message.classList.add("msg-error");
-            message.textContent = "Please select a slot first.";
-            return;
-        }
-
-        const currentDoctor = new URLSearchParams(window.location.search).get("doctor") || "Unknown";
-
-        const name = document.querySelector("#fullName").value;
-        const phone = document.querySelector("#phone").value;
-        const cleanPhone = phone.trim();
-
-        if (cleanPhone.length !== 10) {
-            message.classList.add("msg-error");
-            message.textContent = "Phone must be exactly 10 digits.";
-            return;
-        }
-
-        message.classList.add("msg-success");
-        message.textContent = "Booking request for " + name + " (" + cleanPhone + ") with " + currentDoctor + " at " + currentSlot + " received.";
-        form.reset();
-    });
-
+    message.classList.add("msg-success");
+    message.textContent = "Booking request for " + name + " (" + cleanPhone + ") with " + doctorName + " at " + currentSlot + " received.";
+    form.reset();
+  });
 });

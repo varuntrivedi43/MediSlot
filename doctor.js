@@ -1,33 +1,29 @@
 const params = new URLSearchParams(window.location.search);
-const name = params.get("name");
+const doctorId = params.get("id");
 
-const doctors = {
-    "Dr. Asha Sharma": { specialty: "Cardiologist", exp: 12},
-    "Dr. Rohit Verma": { specialty: "Dermatologist", exp: 8},
-    "Dr. Neha Singh": { specialty: "Pediatrician", exp: 6}
-};
-
-const info = doctors[name];
+const doctor = doctors.find(function (d) {
+  return d.id === doctorId;
+});
 
 const nameLine = document.querySelector("#doctor-detail-name");
 const specLine = document.querySelector("#doctor-detail-specialty");
 const expLine = document.querySelector("#doctor-detail-exp");
 
-nameLine.textContent = "Name: " + (name || "Unknown");
-
-if (info) {
-    specLine.textContent = "Specialty: " + info.specialty;
-    expLine.textContent = "Experience: " + info.exp + " years";
-} 
-
-else {
-    specLine.textContent = "Specialty: Unknown";
-    expLine.textContent = "Experience: Unknown";
+if (doctor) {
+  nameLine.textContent = "Name: " + doctor.name;
+  specLine.textContent = "Specialty: " + doctor.specialty;
+  expLine.textContent = "Experience: " + doctor.experience + " years";
+} else {
+  nameLine.textContent = "Name: Unknown";
+  specLine.textContent = "Specialty: Unknown";
+  expLine.textContent = "Experience: Unknown";
 }
 
 const viewSlotsBtn = document.querySelector("#view-slots-btn");
 
-viewSlotsBtn.addEventListener("click", function() {
-    const url = "slots.html?doctor=" + encodeURIComponent(name);
-    window.location.href = url;
+viewSlotsBtn.addEventListener("click", function () {
+  if (!doctor) {
+    return;
+  }
+  window.location.href = "slots.html?id=" + encodeURIComponent(doctor.id);
 });
