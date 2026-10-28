@@ -11,20 +11,32 @@
         <h1>MediSlot</h1>
 
         <nav>
-            <a href="index.html"></a>
-            <a href="slots.html"></a>
+            <a href="index.html" class="active">Doctors</a>
+            <a href="slots.html">Slots</a>
         </nav>
     </header>
 
-    <main class="container"> 
+    <main class="container">
         <h2>Doctor Details</h2>
 
-        <p id="doctor-detail-name">Name:</p>
-        <p id="doctor-detail-specialty">Specialty:</p>
-        <p id="doctor-detail-exp">Experience:</p>
-        <button type="button" id="view-slots-btn" class="primary-btn">View Slots</button>
+        <a class="back-link" href="index.html">← Back to Doctors</a>
 
-        <a href="index.html">← Back to Doctors</a>
+        <section class="panel doctor-panel stack-12">
+            <div class="card-header">
+            <div class="avatar" id="doctor-avatar">DR</div>
+
+            <div>
+                <p id="doctor-detail-name">Name:</p>
+                <p id="doctor-detail-specialty">Specialty:</p>
+            </div>
+            </div>
+
+            <p id="doctor-detail-exp">Experience:</p>
+
+            <button type="button" id="view-slots-btn" class="primary-btn">
+            View Slots
+            </button>
+        </section>
     </main>
     <script src="data.js"></script>
     <script src="doctor.js"></script>

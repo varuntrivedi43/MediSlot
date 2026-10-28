@@ -11,27 +11,37 @@
         <h1>MediSlot</h1>
         <nav>
             <a href="index.html">Doctors</a>
-            <a href="slots.html">Slots</a>
+            <a href="slots.html" class="active">Slots</a>
         </nav>
     </header>
-    <main>
+    <main class="container">
         <h2>Select a Slot</h2>
         <a id="back-link" href="index.html">← Back</a>
-        <p id="doctor-name">Doctor: Dr. Asha Sharma</p>
-        <p id="selected-slot">Selected slot: none</p>
-        <div class="slots" id="slots-list"></div>
-        <h3>Patient Details</h3>
-        <p id="booking-message"></p>
+        
+        <div class="slots-layout">
+            <!-- LEFT: slots -->
+            <section class="panel" stack-12>
+                <p id="doctor-name">Doctor: Dr. Asha Sharma</p>
+                <p id="selected-slot">Selected slot: none</p>
+                <div class="slots" id="slots-list"></div>
+            </section>
+            
+            <!-- RIGHT: form -->
+            <section class="panel stack-12"> 
+                <h3>Patient Details</h3>
+                <p id="booking-message"></p>
 
-        <form class="booking-form" method="POST">
-            <label for="fullName">Full Name</label>
-            <input id="fullName" name="fullName" type="text" required>
+                <form class="booking-form" method="POST">
+                    <label for="fullName">Full Name</label>
+                    <input id="fullName" name="fullName" type="text" required>
 
-            <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" required>
+                    <label for="phone">Phone</label>
+                    <input id="phone" name="phone" type="tel" required>
 
-            <button type="submit" id="confirm-booking" class="primary-btn">Confirm Booking</button>
-        </form>
+                    <button type="submit" id="confirm-booking" class="primary-btn">Confirm Booking</button>
+                </form>
+            </section>
+        </div>
     </main>
     <script src="data.js"></script>
     <script src="slots.js"></script>

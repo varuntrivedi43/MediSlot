@@ -12,7 +12,7 @@ const expLine = document.querySelector("#doctor-detail-exp");
 if (doctor) {
   nameLine.textContent = "Name: " + doctor.name;
   specLine.textContent = "Specialty: " + doctor.specialty;
-  expLine.textContent = "Experience: " + doctor.experience + " years";
+  expLine.textContent = doctor.experience + "+ years experience";
 } else {
   nameLine.textContent = "Name: Unknown";
   specLine.textContent = "Specialty: Unknown";

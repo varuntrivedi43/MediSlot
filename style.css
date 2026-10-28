@@ -1,12 +1,40 @@
+:root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --text: #0f172a;
+    --muted: #475569;
+    --border: #e2e8f0;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-soft: #dbeafe; 
+}
+
+* {
+    box-sizing: border-box
+}
+
+h1, h2, h3, p {
+    margin: 0;
+}
+
+p {
+    line-height: 1.5;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 16px;
+    background: var(--bg);
+    color: var(--text);
 }
 
 header {
-    border-bottom: 1px solid #ddd;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
     margin-bottom: 16px;
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,23 +47,35 @@ header {
 }
 
 .doctor-list section {
-    border: 1px solid #eee;
-    padding: 12px;
+    border: 1px solid var(--border);
+    padding: 14px;
     width: 220px;
-    background: white;
-    border-radius: 8px;
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06); 
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    display: grid;
+    gap: 8px; 
+}
+
+.doctor-list section .primary-btn {
+    margin-top: 6px;
+    width: 100%;
 }
 
 .primary-btn {
-    padding: 8px 12px;
-    background: black;
+    padding: 10px 12px;
+    background: var(--primary);
     color: white;
-    border: none;
+    border: 1px solid var(--primary);
     cursor: pointer;
+    border-radius: 12px;
+    font-weight: 700;
 }
 
 .primary-btn:hover {
-    background: gray;
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
 }
 
 .container {
@@ -55,8 +95,10 @@ a {
 }
 
 .slot-selected {
-    background: gray;
+    background: var(--primary);
     color: white;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
 }
 
 nav {
@@ -70,7 +112,7 @@ nav a {
 }
 
 nav a:hover {
-    background: lightgray;
+    background: var(--primary-soft);
 }
 
 .booking-form {
@@ -88,20 +130,211 @@ nav a:hover {
 
 #booking-message {
     min-height: 20px;
-    margin-top: 10px;
+    margin: 10px 0 0 0;
     font-weight: bold;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
 }
 
 .msg-error {
-    color: darkred;
+    color: #7f1d1d;
+    background: #fee2e2;
+    border-color: #fecaca;
 }
 
 .msg-success {
-    color: darkgreen;
+    color: #14532d;
+    background: #dcfce7;
+    border-color: #bbf7d0;
 }
 
 .card-link {
     text-decoration : none;
     color: inherit;
     display: block;
+}
+
+.card-link:hover section {
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10); 
+}
+
+.doctor-list h2 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.doctor-list p {
+    margin: 6px 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.slots button {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-weight: 600;
+
+    width: 100%;
+    min-height: 42px;
+}
+
+.slots button:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.slots button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.slots-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 16px;
+    margin-top: 12px;
+    align-items: start;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+@media (max-width: 800px) {
+    .slots-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.booking-form button {
+    width: 100%;
+    margin-top: 6px; 
+}
+
+#selected-slot {
+    font-weight: 700;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    border: 1px solid var(--border);
+}
+
+.tag {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--primary);
+    background: var(--primary-soft);
+    border: 1px solid var(--border);
+}
+
+.card-header {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.avatar {
+    height: 44px;
+    width: 44px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    border: 1px solid var(--border);
+    color: var(--primary);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+}
+
+.card-header h3 {
+    margin: 0;
+}
+
+.card-header p {
+    margin: 6px 0 0 0;
+}
+
+.back-link {
+    display: inline-block;
+    margin: 6px 0 12px 0;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.doctor-panel #doctor-detail-name,
+.doctor-panel #doctor-detail-specialty {
+    margin: 0;
+}
+
+.doctor-panel #doctor-detail-exp {
+    margin: 12px 0;
+    color: var(--text);
+    font-weight: 700;
+    background: var(--primary-soft);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 12px;
+}
+
+.doctor-panel .primary-btn {
+    width: 100%;
+}
+
+nav a.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid var(--border);
+}
+
+h1 {
+    font-size: 20px;
+    letter-spacing: 0.2px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.stack-12 > * + * {
+    margin-top: 12px;
+}
+
+.stack-8 > * + * { 
+    margin-top: 8px; 
+}
+
+.slot-booked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid var(--primary-soft);
+    outline-offset: 2px;
 }
