@@ -1,5 +1,5 @@
 :root {
-    --bg: #f1f5f9;
+    --bg: #e5f0fb;
     --surface: #ffffff;
     --text: #0f172a;
     --muted: #475569;
@@ -337,4 +337,61 @@ a:focus-visible,
 input:focus-visible {
     outline: 3px solid var(--primary-soft);
     outline-offset: 2px;
+}
+
+.muted { 
+    color: var(--muted); 
+}
+
+.booking-item {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+
+.booking-item + .booking-item {
+    margin-top: 10px;
+}
+
+.booking-item h4 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+}
+
+.booking-item p {
+    margin: 4px 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    align-items: center;
+}
+
+.hero-text h2 {
+    margin: 0 0 8px 0;
+    font-size: 26px;
+}
+
+.hero-media img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+}
+
+@media (max-width: 800px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
 }

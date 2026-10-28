@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSlot | Bookings</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="data:,">
+    <link rel="icon" href="assets/favicon.svg">
+</head>
+<body>
+    <header>
+        <h1>MediSlot</h1>
+        <nav>
+            <a href="index.html">Doctors</a>
+            <a href="slots.html" id="nav-slots-link">Slots</a>
+            <a href="bookings.html" class="active">Bookings</a>
+        </nav>
+    </header>
+
+    <main class="conatiner stack-12">
+        <h2>Your Bookings</h2>
+        <p class="muted">Saved on this device (localStorage).</p>
+
+        <section class="panel">
+            <div id="booking-list"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="bookings.js"></script>
+</body>
+</html>

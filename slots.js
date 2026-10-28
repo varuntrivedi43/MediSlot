@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const doctorName = doctor ? doctor.name : "Unknown Doctor";
 
+  if (doctor) {
+    localStorage.setItem("lastDoctorId", doctor.id);
+  }
+
   const slotsList = document.querySelector("#slots-list");
 
     if (doctor && slotsList) {
@@ -110,6 +114,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     message.classList.add("msg-success");
     message.textContent = "Booking request for " + name + " (" + cleanPhone + ") with " + doctorName + " at " + currentSlot + " received.";
+
+    const raw = localStorage.getItem("bookings");
+    const bookings = raw ? JSON.parse(raw) : [];
+
+    bookings.unshift({
+      id: String(Date.now()),
+      doctorId: doctorId,
+      doctorName: doctorName,
+      slot: currentSlot,
+      patientName: name,
+      phone: cleanPhone,
+      createdAt: new Date().toISOString()
+    });
+
+    localStorage.setItem("bookings", JSON.stringify(bookings));
     form.reset();
   });
 });

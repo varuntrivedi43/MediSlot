@@ -6,25 +6,43 @@
         </title>
         <link rel="stylesheet" href="style.css">
         <link rel="icon" href="data:,">
+        <link rel="icon" href="assets/favicon.svg">
     </head>
 
     <body> 
+
         <header> 
             <h1>MediSlot</h1>
             <nav>
                 <a href="index.html" class="active">Doctors</a>
-                <a href="slots.html">Slots</a>
+                <a href="slots.html" id="nav-slots-link">Slots</a>
+                <a href="bookings.html">Bookings</a>
             </nav>
         </header>
 
         <main>
-            <div class="container"> 
-                <h2>Available Doctors</h2>
+            <div class="container">
+                <section class="hero">
+                    <div class="hero-text">
+                        <h2>Book appointments in minutes.</h2>
+                        <p class="muted">
+                        Choose a doctor, pick a slot, and confirm your booking — fast and simple.
+                        </p>
+                    </div>
+
+                    <div class="hero-media">
+                        <img src="assets/hero.svg" alt="Health illustration" />
+                    </div>
+                </section>
+
+                <h3>Available Doctors</h3>
                 <div class="doctor-list" id="doctors-list"></div>
             </div>
         </main>
+
         <script src="data.js"></script>
         <script src="index.js"></script>
         <script src="app.js"></script>
+
     </body>
 </html>
