@@ -15,7 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
   html += `<a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
       <section class="doctors">
         <div class="card-header">
-          <div class="avatar">${getInitials(d.name)}</div>
+          <div class="avatar has-img">
+            <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
+            <span class="avatar-fallback">${getInitials(d.name)}</span>
+          </div>
           <div>
             <h3>${d.name}</h3>
             <p><span class="tag">${d.specialty}</span></p>
@@ -33,4 +36,12 @@ document.addEventListener("DOMContentLoaded", function () {
 }
 
   list.innerHTML = html;
+  const imgs = document.querySelectorAll(".avatar-img");
+
+  for (const img of imgs) {
+    img.addEventListener("error", function () {
+      const avatar = img.closest(".avatar");
+      if (avatar) avatar.classList.remove("has-img");
+    });
+  }
 });

@@ -4,10 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const params = new URLSearchParams(window.location.search);
 
-  // We now use doctor ID in the URL: slots.html?id=d1
   const doctorId = params.get("id");
 
-  // Find the doctor object from data.js
   const doctor = doctors.find(function (d) {
     return d.id === doctorId;
   });
@@ -20,38 +18,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const slotsList = document.querySelector("#slots-list");
 
-    if (doctor && slotsList) {
-        let slotsHtml = "";
+  if (doctor && slotsList) {
+    let slotsHtml = "";
 
-        for (const s of doctor.slots) {
-            slotsHtml += `<button type="button">${s}</button>`;
-        }
-
-        slotsList.innerHTML = slotsHtml;
+    for (const s of doctor.slots) {
+      slotsHtml += `<button type="button">${s}</button>`;
     }
 
-  // Back link
-  const backLink = document.querySelector("#back-link");
-  if (doctorId) {
-    backLink.href = "doctor.html?id=" + encodeURIComponent(doctorId);
-    backLink.textContent = "← Back to Doctor Details";
-  } else {
-    backLink.href = "index.html";
-    backLink.textContent = "← Back to Doctors";
+    slotsList.innerHTML = slotsHtml;
   }
 
-  // Doctor line on page
-  const doctorLine = document.querySelector("#doctor-name");
-  doctorLine.textContent = "Doctor: " + doctorName;
+  const backLink = document.querySelector("#back-link");
+  if (backLink) {
+    if (doctorId) {
+      backLink.href = "doctor.html?id=" + encodeURIComponent(doctorId);
+      backLink.textContent = "← Back to Doctor Details";
+    } else {
+      backLink.href = "index.html";
+      backLink.textContent = "← Back to Doctors";
+    }
+  }
 
-  // Slot selection
+  const doctorLine = document.querySelector("#doctor-name");
+  if (doctorLine) {
+    doctorLine.textContent = "Doctor: " + doctorName;
+  }
+
   const output = document.querySelector("#selected-slot");
   const buttons = document.querySelectorAll(".slots button");
   const slot = params.get("slot");
   let selectedBtn = null;
 
-  // Restore selected slot from URL on refresh
-  if (slot) {
+  if (slot && output) {
     output.textContent = "Selected slot: " + slot;
     confirmBtn.disabled = false;
 
@@ -69,13 +67,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   for (const btn of buttons) {
     btn.addEventListener("click", function () {
+      if (!output) return;
+
       output.textContent = "Selected slot: " + btn.textContent;
       confirmBtn.disabled = false;
 
-      message.textContent = "";
-      message.classList.remove("msg-error", "msg-success");
+      if (message) {
+        message.textContent = "";
+        message.classList.remove("msg-error", "msg-success");
+      }
 
-      // Update URL without reloading the page
       const p = new URLSearchParams(window.location.search);
       p.set("slot", btn.textContent);
       window.history.replaceState({}, "", "?" + p.toString());
@@ -89,46 +90,81 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
+  if (form) {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    message.classList.remove("msg-error", "msg-success");
+      if (message) {
+        message.classList.remove("msg-error", "msg-success");
+      }
 
-    const currentSlot = new URLSearchParams(window.location.search).get("slot");
+      const currentSlot = new URLSearchParams(window.location.search).get("slot");
 
-    if (!currentSlot) {
-      message.classList.add("msg-error");
-      message.textContent = "Please select a slot first.";
-      return;
-    }
+      if (!currentSlot) {
+        if (message) {
+          message.classList.add("msg-error");
+          message.textContent = "Please select a slot first.";
+        }
+        return;
+      }
 
-    const name = document.querySelector("#fullName").value;
-    const phone = document.querySelector("#phone").value;
-    const cleanPhone = phone.trim();
+      const name = document.querySelector("#fullName").value;
+      const phone = document.querySelector("#phone").value;
+      const cleanPhone = phone.trim();
 
-    if (cleanPhone.length !== 10) {
-      message.classList.add("msg-error");
-      message.textContent = "Phone must be exactly 10 digits.";
-      return;
-    }
+      if (cleanPhone.length !== 10) {
+        if (message) {
+          message.classList.add("msg-error");
+          message.textContent = "Phone must be exactly 10 digits.";
+        }
+        return;
+      }
 
-    message.classList.add("msg-success");
-    message.textContent = "Booking request for " + name + " (" + cleanPhone + ") with " + doctorName + " at " + currentSlot + " received.";
+      const raw = localStorage.getItem("bookings");
+      const bookings = raw ? JSON.parse(raw) : [];
 
-    const raw = localStorage.getItem("bookings");
-    const bookings = raw ? JSON.parse(raw) : [];
+      const alreadyBooked = bookings.some(function (b) {
+        return b.doctorId === doctorId && b.slot === currentSlot;
+      });
 
-    bookings.unshift({
-      id: String(Date.now()),
-      doctorId: doctorId,
-      doctorName: doctorName,
-      slot: currentSlot,
-      patientName: name,
-      phone: cleanPhone,
-      createdAt: new Date().toISOString()
+      if (alreadyBooked) {
+        if (message) {
+          message.classList.add("msg-error");
+          message.textContent = "This slot is already booked. Please choose another slot.";
+        }
+        return;
+      }
+
+      bookings.unshift({
+        id: String(Date.now()),
+        doctorId: doctorId,
+        doctorName: doctorName,
+        slot: currentSlot,
+        patientName: name,
+        phone: cleanPhone,
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+
+      if (message) {
+        message.classList.add("msg-success");
+        message.textContent =
+          "Booking request for " +
+          name +
+          " (" +
+          cleanPhone +
+          ") with " +
+          doctorName +
+          " at " +
+          currentSlot +
+          " received.";
+      }
+
+      form.reset();
+      setTimeout(function () {
+        window.location.href = "bookings.html";
+      }, 900);
     });
-
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-    form.reset();
-  });
-});
+  }
+}); 

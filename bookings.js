@@ -1,14 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
   const list = document.querySelector("#bookings-list");
+  const empty = document.querySelector("#bookings-empty");
   if (!list) return;
 
   const raw = localStorage.getItem("bookings");
   const bookings = raw ? JSON.parse(raw) : [];
 
   if (bookings.length === 0) {
-    list.innerHTML = "<p class='muted'>No bookings yet.</p>";
+    if (empty) {
+      empty.style.display = "block";
+      empty.innerHTML = `
+        <img src="assets/empty.svg" alt="No bookings" />
+        <h3>No bookings yet</h3>
+        <p>Book an appointment to see it here.</p>
+      `;
+    }
+    list.innerHTML = "";
     return;
   }
+
+  if (empty) empty.style.display = "none";
 
   let html = "";
 
