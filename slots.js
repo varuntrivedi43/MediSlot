@@ -21,8 +21,27 @@ document.addEventListener("DOMContentLoaded", function () {
   if (doctor && slotsList) {
     let slotsHtml = "";
 
+    const rawBookings = localStorage.getItem("bookings");
+    const allBookings = rawBookings ? JSON.parse(rawBookings) : [];
+
+    const bookedSlots = allBookings
+      .filter(function (b) {
+        return b.doctorId === doctorId;
+      })
+      .map(function (b) {
+        return b.slot;
+      });
+
     for (const s of doctor.slots) {
-      slotsHtml += `<button type="button">${s}</button>`;
+      const isBooked = bookedSlots.includes(s);
+
+      slotsHtml += `
+        <button
+          type="button"
+          ${isBooked ? "disabled" : ""}
+          class="${isBooked ? "slot-booked" : ""}"
+        >${s}</button>
+      `;
     }
 
     slotsList.innerHTML = slotsHtml;
@@ -67,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   for (const btn of buttons) {
     btn.addEventListener("click", function () {
+      if (btn.disabled) return;
       if (!output) return;
 
       output.textContent = "Selected slot: " + btn.textContent;
