@@ -10,22 +10,31 @@
 </head>
 <body>
     <header>
+
         <h1>MediSlot</h1>
         <nav>
             <a href="index.html">Doctors</a>
             <a href="slots.html" id="nav-slots-link">Slots</a>
             <a href="bookings.html" class="active">Bookings</a>
         </nav>
+
     </header>
 
     <main class="conatiner stack-12">
+
         <h2>Your Bookings</h2>
+
+        <button type="button" id="clear-bookings" class="danger-btn">
+            Clear All Bookings
+        </button>
+
         <p class="muted">Saved on this device (localStorage).</p>
 
         <section class="panel">
             <div id="bookings-empty" class="empty-state"></div>
             <div id="bookings-list"></div>
         </section>
+
     </main>
 
     <script src="app.js"></script>

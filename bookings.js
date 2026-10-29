@@ -3,6 +3,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const empty = document.querySelector("#bookings-empty");
   if (!list) return;
 
+  const clearBtn = document.querySelector("#clear-bookings");
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function() {
+      const ok = confirm("Delete all bookings saved on this device?");
+      if (!ok) {
+        return;
+      }
+
+      localStorage.removeItem("bookings");
+      window.location.reload();
+    });
+  }
+
   const raw = localStorage.getItem("bookings");
   const bookings = raw ? JSON.parse(raw) : [];
 
