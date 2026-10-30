@@ -474,3 +474,36 @@ input:focus-visible {
 .danger-btn:hover {
     background: #fecaca;
 }
+
+.selected-slot-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 86, 179, 0.12);
+    background: rgba(0, 86, 179, 0.06);
+    border-radius: 12px;
+    margin: 10px 0 14px;
+}
+
+.selected-slot-text {
+    margin: 0;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(0, 86, 179, 0.25);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+
+.btn-ghost:hover {
+    background: rgba(0, 86, 179, 0.06);
+}
+
+.btn-ghost:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

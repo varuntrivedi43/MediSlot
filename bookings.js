@@ -1,26 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const API_BASE = "http://localhost:3000";
+
   const list = document.querySelector("#bookings-list");
   const empty = document.querySelector("#bookings-empty");
-  if (!list) return;
-
   const clearBtn = document.querySelector("#clear-bookings");
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", function() {
-      const ok = confirm("Delete all bookings saved on this device?");
-      if (!ok) {
-        return;
-      }
+  if (!list) return;
 
-      localStorage.removeItem("bookings");
-      window.location.reload();
-    });
+  // No backend endpoint to clear all bookings yet
+  if (clearBtn) {
+    clearBtn.style.display = "none";
   }
 
-  const raw = localStorage.getItem("bookings");
-  const bookings = raw ? JSON.parse(raw) : [];
-
-  if (bookings.length === 0) {
+  function renderEmpty() {
     if (empty) {
       empty.style.display = "block";
       empty.innerHTML = `
@@ -30,46 +22,87 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
     }
     list.innerHTML = "";
-    return;
   }
 
-  if (empty) empty.style.display = "none";
-
-  let html = "";
-
-  for (const b of bookings) {
-    html += `
-    <div class="booking-item">
-      <h4>${b.doctorName} — ${b.slot}</h4>
-      <p><strong>Patient:</strong> ${b.patientName}</p>
-      <p><strong>Phone:</strong> ${b.phone}</p>
-      <p><strong>Booked at:</strong> ${new Date(b.createdAt).toLocaleString()}</p>
-
-      <button type="button" class="danger-btn cancel-booking" data-booking-id="${b.id}">
-        Cancel booking
-      </button>
-    </div>
-    `;
+  function hideEmpty() {
+    if (empty) empty.style.display = "none";
   }
 
-  list.innerHTML = html;
-  const cancelBtns = document.querySelectorAll(".cancel-booking");
-
-  for (const btn of cancelBtns) {
-    btn.addEventListener("click", function () {
-      const bookingId = btn.dataset.bookingId;
-
-      const raw = localStorage.getItem("bookings");
-      const bookings = raw ? JSON.parse(raw) : [];
-
-      const updated = bookings.filter(function (b) {
-        return b.id !== bookingId;
-      });
-
-      localStorage.setItem("bookings", JSON.stringify(updated));
-
-      // Re-render by reloading the page (simple)
-      window.location.reload();
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, function (m) {
+      return (
+        {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        }[m] || m
+      );
     });
   }
+
+  function loadBookings() {
+    fetch(API_BASE + "/api/bookings")
+      .then(function (res) {
+        if (!res.ok) throw new Error("Failed to load bookings");
+        return res.json();
+      })
+      .then(function (bookings) {
+        if (!Array.isArray(bookings) || bookings.length === 0) {
+          renderEmpty();
+          return;
+        }
+
+        hideEmpty();
+
+        let html = "";
+        for (const b of bookings) {
+          html += `
+            <div class="booking-item">
+              <h4>${escapeHtml(b.doctorName)} — ${escapeHtml(b.slot)}</h4>
+              <p><strong>Patient:</strong> ${escapeHtml(b.patientName)}</p>
+              <p><strong>Phone:</strong> ${escapeHtml(b.phone)}</p>
+              <p><strong>Booked at:</strong> ${new Date(b.createdAt).toLocaleString()}</p>
+
+              <button type="button"
+                class="danger-btn cancel-booking"
+                data-booking-id="${escapeHtml(b.id)}">
+                Cancel booking
+              </button>
+            </div>
+          `;
+        }
+
+        list.innerHTML = html;
+
+        const cancelBtns = document.querySelectorAll(".cancel-booking");
+        for (const btn of cancelBtns) {
+          btn.addEventListener("click", function () {
+            const bookingId = btn.dataset.bookingId;
+            btn.disabled = true;
+
+            fetch(API_BASE + "/api/bookings/" + encodeURIComponent(bookingId), {
+              method: "DELETE",
+            })
+              .then(function (res) {
+                if (!res.ok) throw new Error("Failed to delete booking");
+                return res.json();
+              })
+              .then(function () {
+                loadBookings(); // re-render
+              })
+              .catch(function () {
+                btn.disabled = false;
+                alert("Could not cancel booking. Please try again.");
+              });
+          });
+        }
+      })
+      .catch(function () {
+        alert("Could not load bookings. Is the backend running on port 3000?");
+      });
+  }
+
+  loadBookings();
 });
