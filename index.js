@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const list = document.querySelector("#doctors-list");
   if (!list) return;
 
-  let html = "";
-
   function getInitials(name) {
     const parts = name.replace("Dr. ", "").trim().split(" ");
     const first = parts[0] ? parts[0][0] : "";
@@ -11,37 +9,50 @@ document.addEventListener("DOMContentLoaded", function () {
     return (first + last).toUpperCase();
   }
 
-  for (const d of doctors) {
-  html += `<a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
-      <section class="doctors">
-        <div class="card-header">
-          <div class="avatar has-img">
-            <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
-            <span class="avatar-fallback">${getInitials(d.name)}</span>
-          </div>
-          <div>
-            <h3>${d.name}</h3>
-            <p><span class="tag">${d.specialty}</span></p>
-          </div>
-        </div>
+  fetch("http://localhost:3000/api/doctors")
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (doctors) {
+      let html = "";
 
-        <p>Experience: ${d.experience} years</p>
+      for (const d of doctors) {
+        html += `
+          <a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
+            <section class="doctors">
+              <div class="card-header">
+                <div class="avatar has-img">
+                  <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
+                  <span class="avatar-fallback">${getInitials(d.name)}</span>
+                </div>
+                <div>
+                  <h3>${d.name}</h3>
+                  <p><span class="tag">${d.specialty}</span></p>
+                </div>
+              </div>
 
-        <button type="button" class="primary-btn view-slots" data-doctor-id="${d.id}">
-          View Slots
-        </button>
-      </section>
-    </a>
-  `;
-}
+              <p>Experience: ${d.experience} years</p>
 
-  list.innerHTML = html;
-  const imgs = document.querySelectorAll(".avatar-img");
+              <button type="button" class="primary-btn view-slots" data-doctor-id="${d.id}">
+                View Slots
+              </button>
+            </section>
+          </a>
+        `;
+      }
 
-  for (const img of imgs) {
-    img.addEventListener("error", function () {
-      const avatar = img.closest(".avatar");
-      if (avatar) avatar.classList.remove("has-img");
+      list.innerHTML = html;
+
+      // If avatar fails, show initials
+      const imgs = document.querySelectorAll(".avatar-img");
+      for (const img of imgs) {
+        img.addEventListener("error", function () {
+          const avatar = img.closest(".avatar");
+          if (avatar) avatar.classList.remove("has-img");
+        });
+      }
+    })
+    .catch(function () {
+      list.innerHTML = "<p class='muted'>Failed to load doctors.</p>";
     });
-  }
 });
