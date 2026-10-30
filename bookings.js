@@ -3,14 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const list = document.querySelector("#bookings-list");
   const empty = document.querySelector("#bookings-empty");
-  const clearBtn = document.querySelector("#clear-bookings");
 
   if (!list) return;
-
-  // No backend endpoint to clear all bookings yet
-  if (clearBtn) {
-    clearBtn.style.display = "none";
-  }
 
   function renderEmpty() {
     if (empty) {
@@ -80,7 +74,9 @@ document.addEventListener("DOMContentLoaded", function () {
         for (const btn of cancelBtns) {
           btn.addEventListener("click", function () {
             const bookingId = btn.dataset.bookingId;
+
             btn.disabled = true;
+            btn.textContent = "Cancelling...";
 
             fetch(API_BASE + "/api/bookings/" + encodeURIComponent(bookingId), {
               method: "DELETE",
@@ -94,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
               })
               .catch(function () {
                 btn.disabled = false;
+                btn.textContent = "Cancel booking";
                 alert("Could not cancel booking. Please try again.");
               });
           });
