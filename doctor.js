@@ -7,37 +7,44 @@ document.addEventListener("DOMContentLoaded", function () {
   const expLine = document.querySelector("#doctor-detail-exp");
   const viewSlotsBtn = document.querySelector("#view-slots-btn");
 
-  function showUnknown() {
-    if (nameLine) nameLine.textContent = "Name: Unknown";
-    if (specLine) specLine.textContent = "Specialty: Unknown";
-    if (expLine) expLine.textContent = "Experience: Unknown";
+  function setText(name, spec, exp) {
+    if (nameLine) nameLine.textContent = name;
+    if (specLine) specLine.textContent = spec;
+    if (expLine) expLine.textContent = exp;
   }
 
-  if (!doctorId) {
-    showUnknown();
-    return;
+  function showError(message) {
+    setText("Could not load doctor", message, "Please try again.");
   }
 
-  fetch("http://localhost:3000/api/doctors/" + encodeURIComponent(doctorId))
-    .then(function (res) {
-      if (!res.ok) throw new Error("Doctor not found");
-      return res.json();
-    })
-    .then(function (doctor) {
-      if (nameLine) nameLine.textContent = "Name: " + doctor.name;
-      if (specLine) specLine.textContent = "Specialty: " + doctor.specialty;
-      if (expLine) expLine.textContent = doctor.experience + "+ years experience";
+  async function loadDoctor() {
+    if (!doctorId) {
+      setText("Name: Unknown", "Specialty: Unknown", "Experience: Unknown");
+      return;
+    }
+
+    setText("Loading...", "Please wait", "");
+
+    try {
+      const doctor = await window.apiGet("/api/doctors/" + encodeURIComponent(doctorId));
+
+      setText(
+        "Name: " + doctor.name,
+        "Specialty: " + doctor.specialty,
+        doctor.experience + "+ years experience"
+      );
 
       localStorage.setItem("lastDoctorId", doctor.id);
 
       if (viewSlotsBtn) {
-        viewSlotsBtn.addEventListener("click", function () {
-          window.location.href =
-            "slots.html?id=" + encodeURIComponent(doctor.id);
-        });
+        viewSlotsBtn.onclick = function () {
+          window.location.href = "slots.html?id=" + encodeURIComponent(doctor.id);
+        };
       }
-    })
-    .catch(function () {
-      showUnknown();
-    });
+    } catch (err) {
+      showError(err.message || "Service temporarily unavailable");
+    }
+  }
+
+  loadDoctor();
 });
