@@ -1,9 +1,15 @@
+// Jab poora HTML page browser me load ho jaye, tabhi JS execute hoga
 document.addEventListener("DOMContentLoaded", function () {
+  // Homepage par doctors render karne wala container find karte hain
   const list = document.querySelector("#doctors-list");
+  
+  // Agar ye element page par nahi hai (jaise kisi aur page par), to wahi se return ho jao
   if (!list) return;
 
-  const CACHE_KEY = "doctors_cache_v1";
-
+  // ----------------------------------------------------
+  // HELPER 1: Doctor ke naam se Initials nikalna
+  // Example: "Dr. Asha Sharma" -> "AS" (avatar fallback ke liye)
+  // ----------------------------------------------------
   function getInitials(name) {
     const parts = String(name).replace("Dr. ", "").trim().split(" ");
     const first = parts[0] ? parts[0][0] : "";
@@ -11,6 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return (first + last).toUpperCase();
   }
 
+  // ----------------------------------------------------
+  // HELPER 2: Profile Image fail hone par Initial dikhana
+  // Agar image load hone me error aaye, to `.has-img` class remove kar do
+  // ----------------------------------------------------
   function wireAvatarFallback() {
     const imgs = document.querySelectorAll(".avatar-img");
     for (const img of imgs) {
@@ -21,14 +31,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // ----------------------------------------------------
+  // UI FUNCTION 1: Loading Skeleton UI
+  // Real data aane tak placeholder grey cards dikhata hai
+  // ----------------------------------------------------
   function renderSkeleton() {
     list.innerHTML = `
       <section class="panel">
         <p class="muted">Loading doctors…</p>
       </section>
-
       <div class="grid">
-        ${Array.from({ length: 6 })
+        ${Array.from({ length: 4 })
           .map(
             () => `
           <section class="doctors" style="opacity:.6">
@@ -49,9 +62,12 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
   }
 
+  // ----------------------------------------------------
+  // UI FUNCTION 2: Doctor Cards Render Karna
+  // API se mile doctors ke array ko HTML cards me convert karke display karta hai
+  // ----------------------------------------------------
   function renderDoctors(doctors) {
     let html = "";
-
     for (const d of doctors) {
       html += `
         <a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
@@ -66,9 +82,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><span class="tag">${d.specialty}</span></p>
               </div>
             </div>
-
-            <p>Experience: ${d.experience} years</p>
-
+            <div class="doctor-meta">
+              <span class="exp-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                ${d.experience}+ Years Exp.
+              </span>
+            </div>
             <button type="button" class="primary-btn view-slots" data-doctor-id="${d.id}">
               View Slots
             </button>
@@ -76,106 +98,59 @@ document.addEventListener("DOMContentLoaded", function () {
         </a>
       `;
     }
-
     list.innerHTML = html;
+    
+    // Cards insert karne ke baad avatar fallbacks activate karte hain
     wireAvatarFallback();
   }
 
-  function renderServiceDown(cachedDoctors) {
-    const hasCache = Array.isArray(cachedDoctors) && cachedDoctors.length > 0;
-
+  // ----------------------------------------------------
+  // UI FUNCTION 3: Patient-Friendly Outage UI
+  // Real-world message + Working Retry button with instant loading feedback
+  // ----------------------------------------------------
+  function renderServiceDown() {
     list.innerHTML = `
-      <section class="panel">
-        <h3>Service temporarily unavailable</h3>
-        <p class="muted">
-          We can’t reach the booking server right now. Please try again.
+      <div class="panel" style="grid-column: 1 / -1; width: 100%;">
+        <h3>Service Temporarily Unavailable</h3>
+        <p class="muted" style="margin-top: 8px;">
+          We are unable to connect to our booking services right now. Please try again in a few moments.
         </p>
-        <div class="row" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="primary-btn" id="retry-doctors">Retry</button>
-          ${hasCache ? `<span class="muted">Showing last saved doctors list.</span>` : ``}
+        <div style="margin-top: 16px;">
+          <button type="button" class="primary-btn" id="retry-doctors">
+            Retry Connection
+          </button>
         </div>
-      </section>
-      <div id="cached-doctors"></div>
+      </div>
     `;
 
+    // Retry button click -> instantly shows loading skeleton & re-attempts API call
     const retryBtn = document.querySelector("#retry-doctors");
-    if (retryBtn) retryBtn.addEventListener("click", loadDoctors);
-
-    if (hasCache) {
-      const cachedWrap = document.querySelector("#cached-doctors");
-      if (cachedWrap) {
-        // render cached list below message
-        const prev = list;
-        // temporarily point list to cached container for render
-        const original = list.innerHTML;
-        cachedWrap.innerHTML = ""; // ensure empty
-        // Render into cachedWrap by direct call
-        cachedWrap.insertAdjacentHTML("beforeend", `<h4 style="margin:14px 0 10px;">Last available doctors</h4><div id="cached-list"></div>`);
-        const cachedList = document.querySelector("#cached-list");
-        if (cachedList) {
-          // swap target
-          const oldList = list;
-          // render into cachedList
-          (function () {
-            let html = "";
-            for (const d of cachedDoctors) {
-              html += `
-                <a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
-                  <section class="doctors">
-                    <div class="card-header">
-                      <div class="avatar has-img">
-                        <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
-                        <span class="avatar-fallback">${getInitials(d.name)}</span>
-                      </div>
-                      <div>
-                        <h3>${d.name}</h3>
-                        <p><span class="tag">${d.specialty}</span></p>
-                      </div>
-                    </div>
-                    <p>Experience: ${d.experience} years</p>
-                    <button type="button" class="primary-btn view-slots" data-doctor-id="${d.id}">
-                      View Slots
-                    </button>
-                  </section>
-                </a>
-              `;
-            }
-            cachedList.innerHTML = html;
-            wireAvatarFallback();
-          })();
-        }
-      }
+    if (retryBtn) {
+      retryBtn.addEventListener("click", function () {
+        loadDoctors(); // Re-runs the full fetch flow
+      });
     }
   }
 
-  function readCache() {
-    try {
-      const raw = localStorage.getItem(CACHE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  function writeCache(doctors) {
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify(doctors));
-    } catch (_) {}
-  }
-
+  // ----------------------------------------------------
+  // MAIN FUNCTION: Data Fetching Process
+  // ----------------------------------------------------
   async function loadDoctors() {
+    // Step 1: Pehle loading skeleton UI dikhao
     renderSkeleton();
 
     try {
-      // uses api.js helper
+      // Step 2: api.js wale helper se GET /api/doctors call karo
       const doctors = await window.apiGet("/api/doctors");
-      writeCache(doctors);
+      
+      // Step 3: Success hone par doctors render karo
       renderDoctors(doctors);
     } catch (err) {
-      const cached = readCache();
-      renderServiceDown(cached);
+      // Step 4: Server down ya koi error aane par Service Down UI dikhao
+      renderServiceDown();
     }
   }
 
+  // Page load hone par main function execute karo
   loadDoctors();
 });
