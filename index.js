@@ -1,14 +1,21 @@
-// Jab poora HTML page browser me load ho jaye, tabhi JS execute hoga
+// Page ka HTML fully load hone ke baad hi JS execute hoga
 document.addEventListener("DOMContentLoaded", function () {
-  // Homepage par doctors render karne wala container find karte hain
-  const list = document.querySelector("#doctors-list");
   
-  // Agar ye element page par nahi hai (jaise kisi aur page par), to wahi se return ho jao
+  // DOM Elements select karte hain
+  const list = document.querySelector("#doctors-list");
   if (!list) return;
 
+  const searchInput = document.querySelector("#doctor-search");
+  const filterPills = document.querySelectorAll(".filter-pill");
+
+  // State Variables (Data manage karne ke liye)
+  let allDoctors = [];             // API se mile saare doctors yahan store honge
+  let currentSpecialty = "ALL";     // Active specialty filter pill (default: "ALL")
+  let currentSearchQuery = "";     // User ka typing search text
+
   // ----------------------------------------------------
-  // HELPER 1: Doctor ke naam se Initials nikalna
-  // Example: "Dr. Asha Sharma" -> "AS" (avatar fallback ke liye)
+  // HELPER 1: Doctor Initials (Avatar fallback ke liye)
+  // Example: "Dr. Asha Sharma" -> "AS"
   // ----------------------------------------------------
   function getInitials(name) {
     const parts = String(name).replace("Dr. ", "").trim().split(" ");
@@ -18,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ----------------------------------------------------
-  // HELPER 2: Profile Image fail hone par Initial dikhana
-  // Agar image load hone me error aaye, to `.has-img` class remove kar do
+  // HELPER 2: Image Error Fallback
+  // Agar image load na ho to avatar se `.has-img` hata kar initials dikhao
   // ----------------------------------------------------
   function wireAvatarFallback() {
     const imgs = document.querySelectorAll(".avatar-img");
@@ -32,46 +39,88 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ----------------------------------------------------
-  // UI FUNCTION 1: Loading Skeleton UI
-  // Real data aane tak placeholder grey cards dikhata hai
+  // UI FUNCTION 1: Loading Skeleton Placeholder
+  // Data load hone tak grey placeholder panel dikhayega
   // ----------------------------------------------------
   function renderSkeleton() {
     list.innerHTML = `
       <section class="panel">
-        <p class="muted">Loading doctors…</p>
+        <p class="muted">Loading available doctors…</p>
       </section>
-      <div class="grid">
-        ${Array.from({ length: 4 })
-          .map(
-            () => `
-          <section class="doctors" style="opacity:.6">
-            <div class="card-header">
-              <div class="avatar"></div>
-              <div style="flex:1">
-                <div style="height:14px;background:#e9eef7;border-radius:8px;width:60%;margin-bottom:10px;"></div>
-                <div style="height:12px;background:#eef2fb;border-radius:8px;width:35%;"></div>
-              </div>
-            </div>
-            <div style="height:12px;background:#eef2fb;border-radius:8px;width:40%;margin:14px 0;"></div>
-            <div style="height:38px;background:#e9eef7;border-radius:12px;width:140px;"></div>
-          </section>
-        `
-          )
-          .join("")}
-      </div>
     `;
   }
 
   // ----------------------------------------------------
-  // UI FUNCTION 2: Doctor Cards Render Karna
-  // API se mile doctors ke array ko HTML cards me convert karke display karta hai
+  // FILTER LOGIC: Search Text + Specialty Pill Filter
+  // User ke search typing aur selected pill ke basis par list filter karta hai
   // ----------------------------------------------------
-  function renderDoctors(doctors) {
+    // ----------------------------------------------------
+  // SMART & FLEXIBLE SEARCH LOGIC
+  // "Dr." prefix optional, partial name, specialty & location matching
+  // ----------------------------------------------------
+  function getFilteredDoctors() {
+    const rawQuery = currentSearchQuery.trim().toLowerCase();
+
+    return allDoctors.filter(function (doc) {
+      // 1. Category Pill Filter Check
+      const matchesSpecialty =
+        currentSpecialty === "ALL" ||
+        (doc.specialty &&
+          doc.specialty.toLowerCase() === currentSpecialty.toLowerCase());
+
+      if (!matchesSpecialty) return false;
+      if (!rawQuery) return true;
+
+      // "Dr." prefix ko strip karke clean search text banao (e.g. "Dr Asha" -> "asha")
+      const cleanQuery = rawQuery.replace(/^dr\.?\s*/i, "");
+
+      // Doctor ka saara text ek jagah combine karo
+      const fullDoctorText = [
+        doc.name,
+        doc.specialty,
+        doc.qualification,
+        doc.clinic,
+        doc.location,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      // Query ke har word ko check karo (e.g. "Asha Sharma" -> ["asha", "sharma"])
+      const searchTerms = (cleanQuery || rawQuery).split(/\s+/);
+
+      // Agar saare typed words doctor details me kahin bhi milein to match TRUE
+      return searchTerms.every(function (term) {
+        return fullDoctorText.includes(term);
+      });
+    });
+  }
+
+  // ----------------------------------------------------
+  // UI FUNCTION 2: Doctor Cards Render
+  // Filtered doctors ke array ko Practo-style Rich Cards me convert karta hai
+  // ----------------------------------------------------
+  function renderDoctors() {
+    const doctors = getFilteredDoctors();
+
+    // Case A: Agar koi doctor match na ho (Empty Filter Result)
+    if (doctors.length === 0) {
+      list.innerHTML = `
+        <div class="panel" style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+          <h3>No doctors found</h3>
+          <p class="muted">Try adjusting your search or specialty filter.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Case B: Doctor cards ki HTML build karo
     let html = "";
     for (const d of doctors) {
       html += `
         <a class="card-link" href="doctor.html?id=${encodeURIComponent(d.id)}">
           <section class="doctors">
+            <!-- Card Header: Avatar + Name + Specialty + Qualification -->
             <div class="card-header">
               <div class="avatar has-img">
                 <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
@@ -79,34 +128,40 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
               <div>
                 <h3>${d.name}</h3>
-                <p><span class="tag">${d.specialty}</span></p>
+                <span class="tag">${d.specialty}</span>
+                <p class="doctor-qualification">${d.qualification || "MBBS"}</p>
               </div>
             </div>
+
+            <!-- Badges: Rating Star + Experience Years -->
             <div class="doctor-meta">
-              <span class="exp-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 11.08V12a10 10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                ${d.experience}+ Years Exp.
-              </span>
+              <span class="rating-badge">★ ${d.rating || "4.8"}</span>
+              <span class="exp-badge">${d.experience}+ Years Exp.</span>
             </div>
-            <button type="button" class="primary-btn view-slots" data-doctor-id="${d.id}">
-              View Slots
-            </button>
+
+            <!-- Clinic Name & Location -->
+            <p class="clinic-info">
+              📍 ${d.clinic ? d.clinic + ", " : ""}${d.location || "Central Clinic"}
+            </p>
+
+            <!-- Card Footer: Fee & Action Button -->
+            <div class="card-footer-row">
+              <span class="fee-tag">₹${d.fee || 500} Consultation</span>
+              <button type="button" class="primary-btn view-slots" style="width: auto; padding: 8px 16px;" data-doctor-id="${d.id}">
+                Book Appointment
+              </button>
+            </div>
           </section>
         </a>
       `;
     }
+
     list.innerHTML = html;
-    
-    // Cards insert karne ke baad avatar fallbacks activate karte hain
-    wireAvatarFallback();
+    wireAvatarFallback(); // Image fallbacks attach karo
   }
 
   // ----------------------------------------------------
-  // UI FUNCTION 3: Patient-Friendly Outage UI
-  // Real-world message + Working Retry button with instant loading feedback
+  // UI FUNCTION 3: Backend Outage / Down Handling
   // ----------------------------------------------------
   function renderServiceDown() {
     list.innerHTML = `
@@ -116,41 +171,57 @@ document.addEventListener("DOMContentLoaded", function () {
           We are unable to connect to our booking services right now. Please try again in a few moments.
         </p>
         <div style="margin-top: 16px;">
-          <button type="button" class="primary-btn" id="retry-doctors">
+          <button type="button" class="primary-btn" id="retry-doctors" style="width: auto;">
             Retry Connection
           </button>
         </div>
       </div>
     `;
 
-    // Retry button click -> instantly shows loading skeleton & re-attempts API call
     const retryBtn = document.querySelector("#retry-doctors");
-    if (retryBtn) {
-      retryBtn.addEventListener("click", function () {
-        loadDoctors(); // Re-runs the full fetch flow
-      });
-    }
+    if (retryBtn) retryBtn.addEventListener("click", loadDoctors);
   }
 
   // ----------------------------------------------------
-  // MAIN FUNCTION: Data Fetching Process
+  // MAIN API FETCH FUNCTION
   // ----------------------------------------------------
   async function loadDoctors() {
-    // Step 1: Pehle loading skeleton UI dikhao
     renderSkeleton();
 
     try {
-      // Step 2: api.js wale helper se GET /api/doctors call karo
-      const doctors = await window.apiGet("/api/doctors");
-      
-      // Step 3: Success hone par doctors render karo
-      renderDoctors(doctors);
+      // api.js se GET /api/doctors call karo
+      allDoctors = await window.apiGet("/api/doctors");
+      renderDoctors();
     } catch (err) {
-      // Step 4: Server down ya koi error aane par Service Down UI dikhao
       renderServiceDown();
     }
   }
 
-  // Page load hone par main function execute karo
+  // ----------------------------------------------------
+  // EVENT LISTENERS: Live Search & Category Pills
+  // ----------------------------------------------------
+
+  // 1. Search Bar typing listener
+  if (searchInput) {
+    searchInput.addEventListener("input", function (e) {
+      currentSearchQuery = e.target.value;
+      renderDoctors(); // Instantly re-filter and re-render
+    });
+  }
+
+  // 2. Specialty Filter Pills click listener
+  filterPills.forEach(function (pill) {
+    pill.addEventListener("click", function () {
+      // Pehle saare pills se active class hatao
+      filterPills.forEach((p) => p.classList.remove("active"));
+      // Clicked pill par active class lagao
+      pill.classList.add("active");
+
+      currentSpecialty = pill.dataset.specialty;
+      renderDoctors(); // Re-filter list
+    });
+  });
+
+  // App initialization
   loadDoctors();
 });

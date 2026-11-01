@@ -35,7 +35,26 @@
                     </div>
                 </section>
 
-                <h3>Available Doctors</h3>
+                <!-- Search and Specialty Filter Section -->
+                <div class="search-filter-section">
+                    <div class="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="doctor-search" placeholder="Search doctors, specialties, or locations..." />
+                    </div>
+
+                    <div class="filter-pills" id="specialty-filters">
+                        <button type="button" class="filter-pill active" data-specialty="ALL">All Doctors</button>
+                        <button type="button" class="filter-pill" data-specialty="Cardiologist">Cardiology</button>
+                        <button type="button" class="filter-pill" data-specialty="Dermatologist">Dermatology</button>
+                        <button type="button" class="filter-pill" data-specialty="Pediatrician">Pediatrics</button>
+                    </div>
+                </div>
+
+                <h2 style="margin: 24px 0 16px 0;">Available Doctors</h2>
+
                 <div class="doctor-list" id="doctors-list"></div>
             </div>
         </main>
