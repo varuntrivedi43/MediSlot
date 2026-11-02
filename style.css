@@ -641,3 +641,34 @@ input[type="text"]:focus, input[type="tel"]:focus {
   border-color: var(--primary-border); 
   background: var(--primary-light); 
 }
+
+/* Slots Page Illustration & Layout Fix */
+.slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.slots-header img, 
+.panel img:not(.avatar-img):not(.empty-state img) {
+  max-width: 110px;
+  height: auto;
+  object-fit: contain;
+}
+
+.slots-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .slots-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}

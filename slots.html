@@ -16,45 +16,54 @@
             <a href="bookings.html">Bookings</a>
         </nav>
     </header>
-    <main class="container">
-        <h2>Select a Slot</h2>
-        <a href="index.html" class="btn-back" id="back-link">← All Doctors</a>
-        
-        <div class="slots-layout">
-            <!-- LEFT: slots -->
-            <section class="panel stack-12">
-                <div class="panel-head">
-                    <div>
-                        <h3>Choose a Slot</h3>
-                        <p class="muted">Pick a time that works best for you.</p> 
-                    </div>
+    <main class="container stack-12">
+        <div style="margin-bottom: 8px;">
+            <a href="index.html" class="btn-back" id="back-link">← Doctor Profile</a>
+        </div>
 
-                    <img class="mini-illus" src="assets/calendar.svg" alt="Calendar" />
+        <div class="slots-layout-grid">
+            <!-- Left Column: Doctor Info & Time Slots -->
+            <section class="panel">
+                <div class="slots-header">
+                <div>
+                    <h2 id="doctor-name">Doctor Details</h2>
+                    <p class="muted">Pick an available time slot for your appointment.</p>
                 </div>
-                <p id="doctor-name">Doctor: Dr. Asha Sharma</p>
-                <div class="seleted-slot-bar">
-                    <p id="selected-slot" class="selected-slot-text" >Selected slot: none</p>
+                <img src="assets/calendar.svg" alt="Calendar illustration" />
+                </div>
 
-                    <button type="button" id="clear-slot-btn" class="btn btn-ghost" disabled>
+                <div class="selected-slot-bar">
+                    <span id="selected-slot">Selected slot: none</span>
+                    <button type="button" id="clear-slot-btn" class="danger-btn" style="padding: 4px 10px; font-size: 0.8rem;" disabled>
                         Clear
                     </button>
                 </div>
+
+                <h4 style="margin-top: 20px; font-size: 0.95rem;">Available Time Slots</h4>
                 <div class="slots" id="slots-list"></div>
             </section>
-            
-            <!-- RIGHT: form -->
-            <section class="panel stack-12"> 
-                <h3>Patient Details</h3>
-                <p id="booking-message"></p>
 
-                <form class="booking-form" method="POST">
+            <!-- Right Column: Patient Details Form -->
+            <section class="panel">
+                <h3 style="margin-bottom: 4px;">Patient Details</h3>
+                <p class="muted" style="font-size: 0.85rem; margin-bottom: 16px;">Enter details to confirm booking.</p>
+
+                <form class="booking-form">
+                <div class="form-group">
                     <label for="fullName">Full Name</label>
-                    <input id="fullName" name="fullName" type="text" required>
+                    <input type="text" id="fullName" placeholder="e.g. Rahul Sharma" required />
+                </div>
 
-                    <label for="phone">Phone</label>
-                    <input id="phone" name="phone" type="tel" required>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10" required />
+                </div>
 
-                    <button type="submit" id="confirm-booking" class="primary-btn">Confirm Booking</button>
+                <div id="booking-message" style="margin-top: 8px;"></div>
+
+                <button type="submit" id="confirm-booking" class="primary-btn" disabled style="margin-top: 12px;">
+                    Confirm Booking
+                </button>
                 </form>
             </section>
         </div>
