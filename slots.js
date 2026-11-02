@@ -86,12 +86,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateBackLink() {
     if (!backLink) return;
+    backLink.className = "btn-back";
     if (doctorId) {
       backLink.href = "doctor.html?id=" + encodeURIComponent(doctorId);
-      backLink.textContent = "← Back to Doctor Details";
+      backLink.textContent = "← Doctor Profile";
     } else {
       backLink.href = "index.html";
-      backLink.textContent = "← Back to Doctors";
+      backLink.textContent = "← All Doctors";
     }
   }
 

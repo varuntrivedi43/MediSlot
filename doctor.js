@@ -1,97 +1,130 @@
-// Jab poora HTML page load ho jaye, tabhi JS chalega
+// Document load event listener
 document.addEventListener("DOMContentLoaded", function () {
-
-  // URL se doctor ID nikalte hain (?id=d1)
   const params = new URLSearchParams(window.location.search);
   const doctorId = params.get("id");
 
-  // Page ke elements find karte hain
-  const nameLine = document.querySelector("#doctor-detail-name");
-  const specLine = document.querySelector("#doctor-detail-specialty");
-  const expLine = document.querySelector("#doctor-detail-exp");
-  const viewSlotsBtn = document.querySelector("#view-slots-btn");
-  const detailContainer = document.querySelector("#doctor-detail");
+  const detailContent = document.querySelector("#doctor-detail-content");
+  if (!detailContent) return;
 
   // ----------------------------------------------------
-  // HELPER: Page ke text elements set karna
+  // HELPER: Avatar Initials Generator
   // ----------------------------------------------------
-  function setText(name, spec, exp) {
-    if (nameLine) nameLine.textContent = name;
-    if (specLine) specLine.textContent = spec;
-    if (expLine) expLine.textContent = exp;
+  function getInitials(name) {
+    const parts = String(name).replace("Dr. ", "").trim().split(" ");
+    const first = parts[0] ? parts[0][0] : "";
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (first + last).toUpperCase();
   }
 
   // ----------------------------------------------------
-  // UI 1: Loading State
-  // Data aane tak "Loading..." dikhata hai
+  // UI 1: Skeleton Loading UI
   // ----------------------------------------------------
   function showLoading() {
-    setText("Loading…", "Please wait", "");
-    if (viewSlotsBtn) viewSlotsBtn.style.display = "none";
+    detailContent.innerHTML = `<p class="muted">Loading doctor details…</p>`;
   }
 
   // ----------------------------------------------------
-  // UI 2: Error / Service Unavailable State
-  // Backend down ya doctor not found hone par friendly message + Retry
+  // UI 2: Service Outage / Error UI
   // ----------------------------------------------------
   function showError(message) {
-    setText(message, "", "");
+    detailContent.innerHTML = `
+      <div>
+        <h3>Service Temporarily Unavailable</h3>
+        <p class="muted" style="margin-top: 8px;">
+          ${message || "We are unable to connect to our services right now. Please try again."}
+        </p>
+        <button type="button" class="primary-btn" id="retry-doctor" style="width: auto; margin-top: 16px;">
+          Retry Connection
+        </button>
+      </div>
+    `;
 
-    // Retry button dikhata hai
-    if (viewSlotsBtn) {
-      viewSlotsBtn.textContent = "Retry Connection";
-      viewSlotsBtn.style.display = "inline-block";
-      viewSlotsBtn.onclick = function () {
-        loadDoctor(); // Dubara se load karo
-      };
+    const retryBtn = document.querySelector("#retry-doctor");
+    if (retryBtn) {
+      retryBtn.addEventListener("click", loadDoctor);
     }
   }
 
   // ----------------------------------------------------
-  // MAIN: Doctor Data Fetch
+  // UI 3: Render Practo-Style Doctor Profile
+  // ----------------------------------------------------
+  function renderDoctorProfile(doctor) {
+    detailContent.innerHTML = `
+      <div class="card-header" style="margin-bottom: 20px;">
+        <div class="avatar has-img" style="width: 72px; height: 72px;">
+          <img class="avatar-img" src="assets/avatar.svg" alt="Doctor avatar" />
+          <span class="avatar-fallback" style="font-size: 1.4rem;">${getInitials(doctor.name)}</span>
+        </div>
+        <div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 4px;">${doctor.name}</h2>
+          <span class="tag">${doctor.specialty}</span>
+          <p class="doctor-qualification" style="font-size: 0.9rem; margin-top: 4px;">${doctor.qualification || "MBBS"}</p>
+        </div>
+      </div>
+
+      <div class="doctor-meta" style="margin-bottom: 20px;">
+        <span class="rating-badge" style="font-size: 0.9rem; padding: 4px 10px;">★ ${doctor.rating || "4.8"} (${doctor.reviewsCount || 100}+ reviews)</span>
+        <span class="exp-badge" style="font-size: 0.9rem; padding: 4px 12px;">${doctor.experience}+ Years Experience</span>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 16px 0; margin-bottom: 24px;">
+        <p class="clinic-info" style="font-size: 0.95rem; margin-bottom: 8px;">
+          🏢 <strong>${doctor.clinic || "Clinic"}</strong>
+        </p>
+        <p class="clinic-info" style="font-size: 0.9rem; margin-bottom: 0;">
+          📍 ${doctor.location || "Central Location"}
+        </p>
+      </div>
+
+      <div class="card-footer-row" style="border-top: none; padding-top: 0; margin-top: 0;">
+        <div>
+          <span class="muted" style="font-size: 0.82rem; display: block;">Consultation Fee</span>
+          <span class="fee-tag" style="font-size: 1.2rem;">₹${doctor.fee || 500}</span>
+        </div>
+
+        <button type="button" class="primary-btn" id="view-slots-btn" style="width: auto; padding: 12px 28px;">
+          Select Slot & Book
+        </button>
+      </div>
+    `;
+
+    // Wire avatar image error fallback
+    const img = detailContent.querySelector(".avatar-img");
+    if (img) {
+      img.addEventListener("error", function () {
+        const avatar = img.closest(".avatar");
+        if (avatar) avatar.classList.remove("has-img");
+      });
+    }
+
+    // Save doctor ID and navigate to slots page on button click
+    const viewSlotsBtn = document.querySelector("#view-slots-btn");
+    if (viewSlotsBtn) {
+      viewSlotsBtn.addEventListener("click", function () {
+        localStorage.setItem("lastDoctorId", doctor.id);
+        window.location.href = "slots.html?id=" + encodeURIComponent(doctor.id);
+      });
+    }
+  }
+
+  // ----------------------------------------------------
+  // MAIN API FETCH
   // ----------------------------------------------------
   async function loadDoctor() {
-    // Agar URL me ID hi nahi hai
     if (!doctorId) {
-      setText("Name: Unknown", "Specialty: Unknown", "Experience: Unknown");
+      showError("No doctor selected. Please select a doctor from the home page.");
       return;
     }
 
     showLoading();
 
     try {
-      // api.js wale helper se GET /api/doctors/:id call karo
-      const doctor = await window.apiGet(
-        "/api/doctors/" + encodeURIComponent(doctorId)
-      );
-
-      // Success: Doctor details dikhao
-      setText(
-        "Name: " + doctor.name,
-        "Specialty: " + doctor.specialty,
-        doctor.experience + "+ years experience"
-      );
-
-      // Navbar "Slots" smart link ke liye last visited doctor save karo
-      localStorage.setItem("lastDoctorId", doctor.id);
-
-      // View Slots button activate karo
-      if (viewSlotsBtn) {
-        viewSlotsBtn.textContent = "View Slots";
-        viewSlotsBtn.style.display = "inline-block";
-        viewSlotsBtn.onclick = function () {
-          window.location.href =
-            "slots.html?id=" + encodeURIComponent(doctor.id);
-        };
-      }
+      const doctor = await window.apiGet("/api/doctors/" + encodeURIComponent(doctorId));
+      renderDoctorProfile(doctor);
     } catch (err) {
-      // Server down ya 404
-      showError(
-        "We are unable to connect right now. Please try again."
-      );
+      showError("We are unable to connect right now. Please try again.");
     }
   }
 
-  // Page load par doctor fetch karo
   loadDoctor();
 });

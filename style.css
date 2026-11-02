@@ -622,3 +622,22 @@ input[type="text"]:focus, input[type="tel"]:focus {
   font-weight: 700;
   color: var(--text-main);
 }
+
+.btn-back { 
+  display: inline-flex; 
+  align-items: center; 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  color: var(--text-muted); 
+  text-decoration: none; 
+  padding: 6px 14px; 
+  border-radius: 20px; 
+  background: #fff; 
+  border: 1px solid var(--border-color); 
+  transition: var(--transition); 
+}
+.btn-back:hover { 
+  color: var(--primary); 
+  border-color: var(--primary-border); 
+  background: var(--primary-light); 
+}

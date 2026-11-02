@@ -18,26 +18,14 @@
         </nav>
     </header>
 
-    <main class="container">
-        <h2>Doctor Details</h2>
+        <main class="container stack-12">
+        <a href="index.html" class="btn-back" id="back-link">← All Doctors</a>
 
-        <a class="back-link" href="index.html">← Back to Doctors</a>
-
-        <section class="panel doctor-panel stack-12">
-            <div class="card-header">
-            <div class="avatar" id="doctor-avatar">DR</div>
-
-            <div>
-                <p id="doctor-detail-name">Name:</p>
-                <p id="doctor-detail-specialty">Specialty:</p>
+        <section class="panel" id="doctor-detail-card">
+            <div id="doctor-detail-content">
+                <!-- Dynamic Content Rendered by doctor.js -->
+                <p class="muted">Loading doctor details…</p>
             </div>
-            </div>
-
-            <p id="doctor-detail-exp">Experience:</p>
-
-            <button type="button" id="view-slots-btn" class="primary-btn">
-            View Slots
-            </button>
         </section>
     </main>
 
