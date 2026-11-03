@@ -1,22 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar'; // Naya component import kiya
 import './index.css';
 
-// Abhi ke liye hum simple placeholders bana rahe hain
-// Baad mein hum alag files banayenge
-const Home = () => <div style={{ padding: '20px' }}><h1>MediSlot Home (Practo Clone)</h1><p>Yahan search bar aayega.</p></div>;
-const Doctors = () => <div style={{ padding: '20px' }}><h1>Doctors List</h1><p>Yahan doctor cards aayenge.</p></div>;
+const Home = () => (
+  <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+    <h2 style={{ fontSize: '32px' }}>Your Home for Health</h2>
+    <p style={{ color: '#787887' }}>Find and Book Appointments with Doctors near you.</p>
+  </div>
+);
 
 function App() {
   return (
-    // Router hamari puri app ko navigation ki power deta hai
     <Router>
       <div className="app-container">
-        {/* Navigation / Header yahan aayega */}
+        {/* Navbar yahan daal diya taaki har page pe dikhe */}
+        <Navbar /> 
         
         <Routes>
-          {/* Route define karta hai ki kaunse URL par kaunsa page dikhega */}
           <Route path="/" element={<Home />} />
-          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/doctors" element={<div>Doctors Page</div>} />
         </Routes>
       </div>
     </Router>
