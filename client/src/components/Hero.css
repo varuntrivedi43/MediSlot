@@ -1,0 +1,90 @@
+.hero-section {
+  background: linear-gradient(to bottom, #f0f5ff 0%, #ffffff 100%);
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 36px;
+  color: #28328c;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.hero-content p {
+  color: #787887;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.search-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid #d3d3d3;
+}
+
+.search-icon {
+  padding: 0 15px;
+  color: #787887;
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 12px 0;
+}
+
+.search-btn {
+  background-color: #28328c;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #1a237e;
+}
+
+.quick-filters {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.quick-filters span {
+  font-weight: 600;
+  color: #414146;
+}
+
+.filter-pill {
+  background: white;
+  border: 1px solid #d3d3d3;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-pill:hover {
+  border-color: #28328c;
+  color: #28328c;
+}
