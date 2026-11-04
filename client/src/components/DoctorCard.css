@@ -1,0 +1,146 @@
+.doctor-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.doctor-card:hover {
+  box-shadow: 0 4px 16px rgba(40, 50, 140, 0.12);
+  border-color: #28328c;
+}
+
+/* Avatar Styling */
+.doctor-avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.doctor-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28328c 0%, #4a54b5 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.verified-badge {
+  font-size: 11px;
+  color: #00a65a;
+  background: #e6f4ea;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Info Styling */
+.doctor-info {
+  flex: 1;
+}
+
+.doctor-name {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  color: #28328c;
+  cursor: pointer;
+}
+
+.doctor-specialty {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #414146;
+  font-size: 15px;
+}
+
+.doctor-details {
+  margin: 0 0 10px 0;
+  color: #787887;
+  font-size: 14px;
+}
+
+.doctor-clinic {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #414146;
+}
+
+.doctor-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-badge {
+  background: #00a65a;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.reviews-count {
+  font-size: 13px;
+  color: #787887;
+  text-decoration: underline;
+}
+
+/* Action Box Styling */
+.doctor-action-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-left: 1px dashed #e0e0e0;
+  padding-left: 20px;
+  min-width: 180px;
+}
+
+.fee-container {
+  text-align: right;
+}
+
+.fee-label {
+  display: block;
+  font-size: 12px;
+  color: #787887;
+}
+
+.fee-amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: #414146;
+}
+
+.book-btn {
+  background: #28328c;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.book-btn:hover {
+  background: #1a237e;
+}
+
+.availability-text {
+  font-size: 12px;
+  color: #00a65a;
+  font-weight: 600;
+}
