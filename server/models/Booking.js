@@ -6,7 +6,7 @@ const bookingSchema = new mongoose.Schema(
     doctorName: { type: String, required: true },
     slot: { type: String, required: true },
     patientName: { type: String, required: true },
-    phone: { type: String, required: true },
+    patientPhone: { type: String, required: true },
   },
   { timestamps: true }
 );

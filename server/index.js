@@ -76,47 +76,36 @@ app.get("/api/bookings", async function (req, res) {
 });
 
 // Create booking
-app.post("/api/bookings", async function (req, res) {
+app.post('/api/bookings', async (req, res) => {
   try {
-    const doctorId = req.body.doctorId;
-    const slot = req.body.slot;
-    const patientName = req.body.patientName;
-    const phone = req.body.phone;
+    const { doctorId, slot, patientName, patientPhone, doctorName, specialty, clinic } = req.body;
 
-    if (!doctorId || !slot || !patientName || !phone) {
-      return res.status(400).json({
-        error: "doctorId, slot, patientName, phone are required",
-      });
+    // Ye line terminal mein dikhayegi ki kya data aaya
+    console.log("New Booking Request for Doctor ID:", doctorId, "at Slot:", slot);
+
+    // Check if slot already booked
+    const existing = await Booking.findOne({ doctorId, slot });
+    if (existing) {
+      console.log("❌ Conflict: Slot already taken in Database");
+      return res.status(400).json({ message: "This slot is already booked for this doctor." });
     }
 
-    const doctor = doctors.find((d) => d.id === doctorId);
-    if (!doctor) return res.status(404).json({ error: "Doctor not found" });
-
-    const doc = await Booking.create({
+    const newBooking = new Booking({
       doctorId,
-      doctorName: doctor.name,
+      doctorName,
+      specialty,
+      clinic,
       slot,
       patientName,
-      phone,
+      patientPhone
     });
 
-    res.status(201).json({
-      id: String(doc._id),
-      doctorId: doc.doctorId,
-      doctorName: doc.doctorName,
-      slot: doc.slot,
-      patientName: doc.patientName,
-      phone: doc.phone,
-      createdAt: doc.createdAt,
-    });
+    await newBooking.save();
+    console.log("✅ Booking Saved Successfully!");
+    res.status(201).json({ message: "Booking successful", booking: newBooking });
   } catch (err) {
-    // Duplicate slot booking (unique index)
-    if (err && err.code === 11000) {
-      return res.status(409).json({
-        error: "This slot is already booked for this doctor",
-      });
-    }
-    res.status(500).json({ error: "Failed to create booking" });
+    console.error("❌ Backend Error:", err.message);
+    res.status(500).json({ message: "Server error. Please try again." });
   }
 });
 

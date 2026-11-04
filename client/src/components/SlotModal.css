@@ -1,0 +1,157 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-container {
+  background: white;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #28328c;
+}
+
+.sub-header {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #787887;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #787887;
+}
+
+.doctor-summary-bar {
+  background: #f0f5ff;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.summary-fee {
+  font-weight: 800;
+  font-size: 16px;
+  color: #28328c;
+}
+
+.summary-clinic {
+  font-weight: 600;
+  color: #414146;
+}
+
+.booking-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #414146;
+  margin-bottom: 8px;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.slot-pill {
+  background: white;
+  border: 1px solid #28328c;
+  color: #28328c;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slot-pill:hover {
+  background: #f0f5ff;
+}
+
+.slot-pill.selected {
+  background: #28328c;
+  color: white;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #28328c;
+}
+
+.confirm-booking-btn {
+  width: 100%;
+  background: #00a65a; /* Practo Success Green */
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirm-booking-btn:hover {
+  background: #008d4c;
+}
+
+.modal-error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px 24px;
+  font-size: 14px;
+  border-bottom: 1px solid #ffcdd2;
+}

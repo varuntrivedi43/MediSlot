@@ -59,3 +59,24 @@
   border-radius: 8px;
   color: #787887;
 }
+
+.booking-alert-success {
+  background: #e6f4ea;
+  border: 1px solid #00a65a;
+  color: #137333;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+}
+
+.booking-alert-success button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #137333;
+}

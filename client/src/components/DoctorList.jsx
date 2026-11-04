@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import DoctorCard from './DoctorCard';
+import SlotModal from './SlotModal'; // Modal Import
 import './DoctorList.css';
 
 const DoctorList = ({ searchTerm, selectedCategory }) => {
-  // State 1: Doctors array stored from server
   const [doctors, setDoctors] = useState([]);
-  // State 2: Loading indicator while fetching from API
   const [loading, setLoading] = useState(true);
-  // State 3: Outage / Error state handling
   const [error, setError] = useState(null);
+  
+  // State for Modal handling
+  const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState(null);
+  const [confirmedBooking, setConfirmedBooking] = useState(null);
 
-  // Component load hote hi backend se data fetch hoga
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         setLoading(true);
-        // Express Backend Endpoint
         const response = await fetch('http://localhost:3000/api/doctors');
-        
-        if (!response.ok) {
-          throw new Error('Backend server non-responsive');
-        }
-
+        if (!response.ok) throw new Error('Backend non-responsive');
         const data = await response.json();
         setDoctors(data);
         setError(null);
       } catch (err) {
-        console.error("Fetch Error:", err);
-        setError("Unable to connect to MediSlot server. Please check backend.");
+        setError('Unable to connect to MediSlot server.');
       } finally {
         setLoading(false);
       }
@@ -36,18 +31,14 @@ const DoctorList = ({ searchTerm, selectedCategory }) => {
     fetchDoctors();
   }, []);
 
-  // Smart Search Filtering Logic (Tokenized matching across Name, Specialty, Clinic, Location)
   const filteredDoctors = doctors.filter((doc) => {
     const term = searchTerm.toLowerCase().trim();
-    
-    // Check if category pill was selected
     const matchesCategory = selectedCategory 
       ? doc.specialty.toLowerCase().includes(selectedCategory.toLowerCase())
       : true;
 
     if (!term) return matchesCategory;
 
-    // Tokenized Search Match
     const matchesSearch = 
       doc.name.toLowerCase().includes(term) ||
       doc.specialty.toLowerCase().includes(term) ||
@@ -57,8 +48,20 @@ const DoctorList = ({ searchTerm, selectedCategory }) => {
     return matchesCategory && matchesSearch;
   });
 
+  // Open Modal on Book Button Click
   const handleBookSlot = (doctor) => {
-    alert(`Booking Slot for ${doctor.name}. Next step will open slot selection!`);
+    setSelectedDoctorForBooking(doctor);
+  };
+
+  // Close Modal
+  const handleCloseModal = () => {
+    setSelectedDoctorForBooking(null);
+  };
+
+  // On Success Booking from Backend
+  const handleBookingSuccess = (bookingData) => {
+    setConfirmedBooking(bookingData);
+    setSelectedDoctorForBooking(null);
   };
 
   if (loading) {
@@ -75,13 +78,20 @@ const DoctorList = ({ searchTerm, selectedCategory }) => {
       <div className="status-container error-box">
         <h3>⚠️ Connection Error</h3>
         <p>{error}</p>
-        <small>Make sure Node backend server (`server/index.js`) is running on port 3000.</small>
       </div>
     );
   }
 
   return (
     <div className="doctor-list-container">
+      {/* Booking Success Alert */}
+      {confirmedBooking && (
+        <div className="booking-alert-success">
+          🎉 <strong>Appointment Confirmed!</strong> Booking Reference ID: <u>{confirmedBooking._id || confirmedBooking.id}</u> for {confirmedBooking.patientName} with {confirmedBooking.doctorName} on <strong>{confirmedBooking.slot}</strong>.
+          <button onClick={() => setConfirmedBooking(null)}>✕</button>
+        </div>
+      )}
+
       <div className="results-header">
         <h2>{filteredDoctors.length} Doctors Available</h2>
         <p>Book guaranteed appointments without waiting in line</p>
@@ -96,6 +106,15 @@ const DoctorList = ({ searchTerm, selectedCategory }) => {
         filteredDoctors.map((doc) => (
           <DoctorCard key={doc.id} doctor={doc} onBookSlot={handleBookSlot} />
         ))
+      )}
+
+      {/* Render Slot Modal if doctor is selected */}
+      {selectedDoctorForBooking && (
+        <SlotModal
+          doctor={selectedDoctorForBooking}
+          onClose={handleCloseModal}
+          onBookingSuccess={handleBookingSuccess}
+        />
       )}
     </div>
   );
