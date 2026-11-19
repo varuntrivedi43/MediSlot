@@ -58,15 +58,16 @@ app.get("/api/doctors/:id", function (req, res) {
 app.get("/api/bookings", async function (req, res) {
   try {
     const docs = await Booking.find().sort({ createdAt: -1 });
-
     res.json(
       docs.map((b) => ({
         id: String(b._id),
         doctorId: b.doctorId,
         doctorName: b.doctorName,
+        specialty: b.specialty, // Specialty add ki
+        clinic: b.clinic,       // Clinic add kiya
         slot: b.slot,
         patientName: b.patientName,
-        phone: b.phone,
+        patientPhone: b.patientPhone, // phone ki jagah patientPhone
         createdAt: b.createdAt,
       }))
     );
