@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const User = require("./models/User");
 
 // Connect MongoDB
 mongoose
@@ -49,6 +50,60 @@ app.get("/api/doctors/:id", function (req, res) {
 
   res.json(doctor);
 });
+
+
+// -------------------------
+// AUTHENTICATION API (MongoDB)
+// -------------------------
+
+// 1. Register New User
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, phone, email } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ error: 'Name and Phone number are required' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ phone });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Account already exists with this phone number. Please login.' });
+    }
+
+    const newUser = new User({ name, phone, email });
+    await newUser.save();
+
+    console.log("✅ User registered:", newUser.name);
+    res.status(201).json({ message: 'Registration successful', user: newUser });
+  } catch (err) {
+    console.error("Auth Register Error:", err.message);
+    res.status(500).json({ error: 'Failed to register user' });
+  }
+});
+
+// 2. Login User (by Phone)
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with this phone number. Please register.' });
+    }
+
+    console.log("✅ User logged in:", user.name);
+    res.json({ message: 'Login successful', user });
+  } catch (err) {
+    console.error("Auth Login Error:", err.message);
+    res.status(500).json({ error: 'Failed to login' });
+  }
+});
+
 
 // -------------------------
 // BOOKINGS API (MongoDB)

@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Navbar.css';
 
-const Navbar = ({ onOpenLogin }) => {
-  const [selectedCity, setSelectedCity] = useState('New Delhi');
-
+const Navbar = ({ currentUser, onOpenLogin, onLogout }) => {
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -31,18 +29,21 @@ const Navbar = ({ onOpenLogin }) => {
           </div>
 
           <div className="nav-secondary-item">
-            <span>For Providers</span>
-            <span className="dropdown-arrow">▾</span>
-          </div>
-
-          <div className="nav-secondary-item">
             <span>Security & help</span>
             <span className="dropdown-arrow">▾</span>
           </div>
 
-          <button className="login-btn" onClick={onOpenLogin}>
-            Login / Signup
-          </button>
+          {/* Conditional Rendering: User logged in vs logged out */}
+          {currentUser ? (
+            <div className="user-profile-menu">
+              <span className="user-greeting">👋 Hi, <strong>{currentUser.name}</strong></span>
+              <button className="logout-btn" onClick={onLogout}>Logout</button>
+            </div>
+          ) : (
+            <button className="login-btn" onClick={onOpenLogin}>
+              Login / Signup
+            </button>
+          )}
         </div>
       </div>
     </nav>
