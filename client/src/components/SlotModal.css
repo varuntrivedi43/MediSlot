@@ -47,12 +47,24 @@
   color: #787887;
 }
 
-.close-btn {
-  background: transparent;
+.modal-close-x {
+  background: #f0f0f0;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
-  color: #787887;
+  color: #414146;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.modal-close-x:hover {
+  background: #e0e0e0;
+  color: #000;
 }
 
 .doctor-summary-bar {

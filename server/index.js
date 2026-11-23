@@ -7,12 +7,24 @@ const { doctors } = require("./data");
 const Booking = require("./models/Booking");
 
 const app = express();
-
+const Query = require("./models/Query");
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 const User = require("./models/User");
+
+// POST API for Customer Queries
+app.post('/api/queries', async (req, res) => {
+  try {
+    const { userName, userPhone, subject, message } = req.body;
+    const newQuery = new Query({ userName, userPhone, subject, message });
+    await newQuery.save();
+    res.status(201).json({ message: "Query submitted successfully. We will contact you soon." });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to submit query" });
+  }
+});
 
 // Connect MongoDB
 mongoose

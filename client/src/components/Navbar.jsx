@@ -1,52 +1,152 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = ({ currentUser, onOpenLogin, onLogout }) => {
+/**
+ * Navbar Component (Complete & Production Ready)
+ * Features:
+ * 1. Mobile Hamburger Side Drawer
+ * 2. Proper Active Link Underline (No permanent hover bug)
+ * 3. User Login/Logout Session Display
+ * 4. Help & Support Modal Trigger
+ */
+const Navbar = ({ currentUser, onOpenLogin, onLogout, onOpenHelp }) => {
+  // Mobile drawer open/close state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        {/* Left: Brand Logo & Main Nav Links */}
-        <div className="nav-left">
-          <div className="logo" onClick={() => window.location.href = '/'}>
+    <>
+      <nav className="navbar">
+        <div className="nav-container">
+          
+          {/* Left Side: Mobile Hamburger + Logo + Links */}
+          <div className="nav-left">
+            {/* Mobile Hamburger Button */}
+            <button className="hamburger-btn" onClick={toggleDrawer} aria-label="Toggle navigation">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            {/* Brand Logo */}
+            <Link to="/" className="logo">
+              <span className="logo-dot">•</span>MediSlot<span className="logo-dot">•</span>
+            </Link>
+
+            {/* Desktop Navigation Links */}
+            <div className="nav-primary-links">
+              <NavLink 
+                to="/" 
+                end 
+                className={({ isActive }) => isActive ? 'nav-primary-item active' : 'nav-primary-item'}
+              >
+                Find Doctors
+              </NavLink>
+              
+              <NavLink 
+                to="/bookings" 
+                className={({ isActive }) => isActive ? 'nav-primary-item active' : 'nav-primary-item'}
+              >
+                My Appointments
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Right Side: Security Help & User Auth */}
+          <div className="nav-right">
+            <div className="nav-secondary-item" onClick={onOpenHelp}>
+              <span>Security & help</span>
+              <span className="dropdown-arrow">▾</span>
+            </div>
+
+            {currentUser ? (
+              <div className="user-profile-menu">
+                <span className="user-greeting">👋 Hi, <strong>{currentUser.name}</strong></span>
+                <button className="logout-btn" onClick={onLogout}>Logout</button>
+              </div>
+            ) : (
+              <button className="login-btn" onClick={onOpenLogin}>
+                Login / Signup
+              </button>
+            )}
+          </div>
+
+        </div>
+      </nav>
+
+      {/* Mobile Drawer Backdrop (Clicking outside closes drawer) */}
+      {isDrawerOpen && (
+        <div className="drawer-backdrop" onClick={closeDrawer}></div>
+      )}
+
+      {/* Mobile Slide-in Drawer */}
+      <div className={`side-drawer ${isDrawerOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <div className="drawer-logo">
             <span className="logo-dot">•</span>MediSlot<span className="logo-dot">•</span>
           </div>
-
-          <div className="nav-primary-links">
-            <a href="/" className="nav-primary-item active">Find Doctors</a>
-            <a href="#video-consult" className="nav-primary-item">Video Consult</a>
-            <a href="#lab-tests" className="nav-primary-item">Lab Tests</a>
-            <a href="#surgeries" className="nav-primary-item">Surgeries</a>
-            <a href="/bookings" className="nav-primary-item">My Appointments</a>
-          </div>
+          <button className="drawer-close-btn" onClick={closeDrawer}>✕</button>
         </div>
 
-        {/* Right: Dropdowns & Auth */}
-        <div className="nav-right">
-          <div className="nav-secondary-item">
-            <span className="badge-new">NEW</span>
-            <span>For Corporates</span>
-            <span className="dropdown-arrow">▾</span>
+        {currentUser && (
+          <div className="drawer-user-info">
+            <p>Signed in as:</p>
+            <strong>{currentUser.name}</strong>
+            <small>{currentUser.phone}</small>
           </div>
+        )}
 
-          <div className="nav-secondary-item">
-            <span>Security & help</span>
-            <span className="dropdown-arrow">▾</span>
-          </div>
+        <ul className="drawer-links">
+          <li>
+            <NavLink 
+              to="/" 
+              end 
+              onClick={closeDrawer} 
+              className={({ isActive }) => isActive ? 'drawer-link active' : 'drawer-link'}
+            >
+              🔍 Find Doctors
+            </NavLink>
+          </li>
+          <li>
+            <NavLink 
+              to="/bookings" 
+              onClick={closeDrawer} 
+              className={({ isActive }) => isActive ? 'drawer-link active' : 'drawer-link'}
+            >
+              📅 My Appointments
+            </NavLink>
+          </li>
+          <li>
+            <button 
+              className="drawer-action-btn" 
+              onClick={() => { closeDrawer(); onOpenHelp(); }}
+            >
+              🛡️ Security & Help
+            </button>
+          </li>
+        </ul>
 
-          {/* Conditional Rendering: User logged in vs logged out */}
+        <div className="drawer-footer">
           {currentUser ? (
-            <div className="user-profile-menu">
-              <span className="user-greeting">👋 Hi, <strong>{currentUser.name}</strong></span>
-              <button className="logout-btn" onClick={onLogout}>Logout</button>
-            </div>
+            <button className="drawer-logout-btn" onClick={() => { closeDrawer(); onLogout(); }}>
+              Logout
+            </button>
           ) : (
-            <button className="login-btn" onClick={onOpenLogin}>
+            <button className="drawer-login-btn" onClick={() => { closeDrawer(); onOpenLogin(); }}>
               Login / Signup
             </button>
           )}
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 

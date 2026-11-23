@@ -7,11 +7,11 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 0 30px;
+  padding: 0 24px;
 }
 
 .nav-container {
-  max-width: 1250px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -22,17 +22,37 @@
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 35px;
+  gap: 30px;
+}
+
+/* Hamburger button (Desktop pe hidden) */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 26px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger-btn span {
+  width: 100%;
+  height: 2px;
+  background-color: #1a2074;
+  border-radius: 2px;
 }
 
 .logo {
   font-size: 24px;
   font-weight: 800;
   color: #1a2074;
-  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  letter-spacing: 0.5px;
 }
 
 .logo-dot {
@@ -46,19 +66,24 @@
   gap: 24px;
 }
 
+/* Link underline fix: ONLY active class gets the border */
 .nav-primary-item {
   text-decoration: none;
   font-size: 15px;
   font-weight: 600;
   color: #414146;
-  padding: 6px 0;
-  transition: color 0.2s ease;
+  padding: 24px 0;
+  border-bottom: 3px solid transparent; /* default no underline */
+  transition: all 0.2s ease;
 }
 
-.nav-primary-item:hover,
+.nav-primary-item:hover {
+  color: #1a2074;
+}
+
 .nav-primary-item.active {
   color: #1a2074;
-  border-bottom: 2px solid #1a2074;
+  border-bottom: 3px solid #1a2074; /* ONLY active route gets underline */
 }
 
 .nav-right {
@@ -68,33 +93,24 @@
 }
 
 .nav-secondary-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
+  font-size: 14px;
   color: #414146;
   cursor: pointer;
   font-weight: 500;
-}
-
-.badge-new {
-  background-color: #1a2074;
-  color: #ffffff;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .dropdown-arrow {
-  font-size: 11px;
+  font-size: 10px;
   color: #787887;
 }
 
 .login-btn {
   background: transparent;
-  border: 1px solid #d3d3d3;
-  color: #787887;
+  border: 1px solid #1a2074;
+  color: #1a2074;
   padding: 8px 18px;
   border-radius: 4px;
   cursor: pointer;
@@ -104,8 +120,8 @@
 }
 
 .login-btn:hover {
-  border-color: #1a2074;
-  color: #1a2074;
+  background: #1a2074;
+  color: white;
 }
 
 .user-profile-menu {
@@ -134,4 +150,162 @@
 .logout-btn:hover {
   background: #ff4d4f;
   color: white;
+}
+
+/* ======================================================== */
+/* MOBILE SIDE DRAWER CSS (Screens below 850px)            */
+/* ======================================================== */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2500;
+}
+
+.side-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 3000;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.side-drawer.open {
+  left: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.drawer-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a2074;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #787887;
+}
+
+.drawer-user-info {
+  background: #f0f5ff;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.drawer-user-info p {
+  margin: 0;
+  font-size: 11px;
+  color: #787887;
+}
+
+.drawer-user-info strong {
+  display: block;
+  font-size: 14px;
+  color: #1a2074;
+}
+
+.drawer-user-info small {
+  color: #414146;
+  font-size: 12px;
+}
+
+.drawer-links {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+  flex: 1;
+}
+
+.drawer-links li {
+  margin-bottom: 12px;
+}
+
+.drawer-link {
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #414146;
+  display: block;
+  padding: 10px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.drawer-link.active,
+.drawer-link:hover {
+  background: #f0f5ff;
+  color: #1a2074;
+}
+
+.drawer-action-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #414146;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.drawer-footer {
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.drawer-login-btn,
+.drawer-logout-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.drawer-login-btn {
+  background: #1a2074;
+  color: white;
+  border: none;
+}
+
+.drawer-logout-btn {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+}
+
+/* Responsive Media Query */
+@media (max-width: 850px) {
+  .hamburger-btn {
+    display: flex;
+  }
+  
+  .nav-primary-links,
+  .nav-right .nav-secondary-item {
+    display: none;
+  }
 }

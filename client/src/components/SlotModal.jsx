@@ -5,11 +5,11 @@ import './SlotModal.css';
  * SlotModal Component
  * Doctor slot booking interface modal pop-up.
  */
-const SlotModal = ({ doctor, onClose, onBookingSuccess }) => {
+const SlotModal = ({ doctor, currentUser, onClose, onBookingSuccess }) => {
   // Booking Form States
   const [selectedSlot, setSelectedSlot] = useState('');
-  const [patientName, setPatientName] = useState('');
-  const [patientPhone, setPatientPhone] = useState('');
+  const [patientName, setPatientName] = useState(currentUser ? currentUser.name : '');
+  const [patientPhone, setPatientPhone] = useState(currentUser ? currentUser.phone : '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -59,15 +59,15 @@ const SlotModal = ({ doctor, onClose, onBookingSuccess }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="modal-header">
           <div>
             <h2>Book Appointment</h2>
             <p className="sub-header">{doctor.name} • {doctor.specialty}</p>
           </div>
-          <button className="close-btn" onClick={onClose}>✕</button>
+          <button className="modal-close-x" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
         {/* Doctor Summary Bar */}

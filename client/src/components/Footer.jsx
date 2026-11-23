@@ -5,7 +5,7 @@ import './Footer.css';
  * Footer Component
  * Practo-style 6-column deep-blue footer with full navigation and corporate links.
  */
-const Footer = () => {
+const Footer = ({ onOpenHelp }) => {
   return (
     <footer className="practo-footer">
       <div className="footer-top-container">
@@ -17,7 +17,7 @@ const Footer = () => {
             <li><a href="#blog">Blog</a></li>
             <li><a href="#careers">Careers</a></li>
             <li><a href="#press">Press</a></li>
-            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#contact" onClick={(e) => { e.preventDefault(); onOpenHelp(); }}>Contact Us</a></li>
           </ul>
         </div>
 

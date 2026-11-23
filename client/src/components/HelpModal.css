@@ -1,0 +1,35 @@
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+}
+.help-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+}
+.help-card h2 { color: #1a2074; margin-bottom: 5px; }
+.help-card p { color: #787887; font-size: 14px; margin-bottom: 20px; }
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 5px; }
+.input-group select, .input-group textarea {
+  width: 100%; padding: 10px; border: 1px solid #d3d3d3; border-radius: 6px; outline: none;
+}
+.input-group textarea { height: 100px; resize: none; }
+.submit-query-btn {
+  width: 100%; background: #24aae1; color: white; border: none; padding: 12px;
+  border-radius: 6px; font-weight: 700; cursor: pointer;
+}
+.success-msg { text-align: center; padding: 20px; }
+.check-icon { font-size: 50px; color: #00a65a; margin-bottom: 10px; }
+.close-btn { position: absolute; top: 15px; right: 15px; border: none; background: transparent; cursor: pointer; font-size: 18px; }

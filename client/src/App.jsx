@@ -9,12 +9,22 @@ import Testimonials from './components/Testimonials';
 import DoctorList from './components/DoctorList';
 import Bookings from './components/Bookings';
 import Footer from './components/Footer';
-import AuthModal from './components/AuthModal'; // Import Auth Modal
+import AuthModal from './components/AuthModal';
+import HelpModal from './components/HelpModal';
 import './index.css';
 
-const Home = () => {
+/**
+ * Home Component
+ * Intelligent UX:
+ * 1. If searching -> Immediately displays Doctor Cards right below search box.
+ * 2. If idle/browsing -> Displays explore cards, articles, and symptoms.
+ */
+const Home = ({ currentUser }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+
+  // Flag: Kya user kuch actively search kar raha hai?
+  const isSearchActive = searchTerm.trim().length > 0 || selectedCategory.trim().length > 0;
 
   return (
     <div>
@@ -24,23 +34,61 @@ const Home = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
-      <ServiceCards />
-      <Specialties />
-      <Articles />
-      <Testimonials />
-      <DoctorList 
-        searchTerm={searchTerm} 
-        selectedCategory={selectedCategory} 
-      />
+
+      {/* SEARCH IS ACTIVE: Doctors are shown IMMEDIATELY right here */}
+      {isSearchActive ? (
+        <div style={{ backgroundColor: '#f8f9fa', padding: '20px 0', minHeight: '60vh' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+            <button 
+              onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #d3d3d3',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                color: '#1a2074',
+                marginBottom: '10px'
+              }}
+            >
+              ← Back to Explore All Services
+            </button>
+          </div>
+          <DoctorList 
+            searchTerm={searchTerm} 
+            selectedCategory={selectedCategory} 
+            currentUser={currentUser} 
+          />
+        </div>
+      ) : (
+        /* IDLE / EXPLORE MODE: Full Practo Landing Experience */
+        <>
+          <ServiceCards />
+          <Specialties />
+          <Articles />
+          <Testimonials />
+          
+          {/* Default Doctors preview at the bottom */}
+          <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '20px' }}>
+            <DoctorList 
+              searchTerm="" 
+              selectedCategory="" 
+              currentUser={currentUser} 
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
 function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Check if user is already logged in on initial load
+  // Restore user session on refresh
   useEffect(() => {
     const savedUser = localStorage.getItem('medislot_user');
     if (savedUser) {
@@ -67,23 +115,31 @@ function App() {
         <Navbar 
           currentUser={currentUser} 
           onOpenLogin={() => setIsAuthOpen(true)} 
-          onLogout={handleLogout} 
+          onLogout={handleLogout}
+          onOpenHelp={() => setIsHelpOpen(true)}
         />
         
-        <div style={{ flex: 1 }}>
+        <main style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home currentUser={currentUser} />} />
             <Route path="/bookings" element={<Bookings />} />
           </Routes>
-        </div>
+        </main>
 
-        <Footer />
+        <Footer onOpenHelp={() => setIsHelpOpen(true)} />
 
-        {/* Auth Modal Popup */}
+        {/* Modal Dialogs */}
         {isAuthOpen && (
           <AuthModal 
             onClose={() => setIsAuthOpen(false)} 
             onLoginSuccess={handleLoginSuccess} 
+          />
+        )}
+
+        {isHelpOpen && (
+          <HelpModal 
+            currentUser={currentUser} 
+            onClose={() => setIsHelpOpen(false)} 
           />
         )}
       </div>

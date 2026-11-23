@@ -3,7 +3,7 @@ import DoctorCard from './DoctorCard';
 import SlotModal from './SlotModal'; // Modal Import
 import './DoctorList.css';
 
-const DoctorList = ({ searchTerm, selectedCategory }) => {
+const DoctorList = ({ searchTerm, selectedCategory, currentUser }) => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -112,6 +112,7 @@ const DoctorList = ({ searchTerm, selectedCategory }) => {
       {selectedDoctorForBooking && (
         <SlotModal
           doctor={selectedDoctorForBooking}
+          currentUser={currentUser}
           onClose={handleCloseModal}
           onBookingSuccess={handleBookingSuccess}
         />
