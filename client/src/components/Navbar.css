@@ -1,13 +1,13 @@
 .navbar {
   background-color: #ffffff;
-  height: 72px;
+  height: 70px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #ebebeb;
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 .nav-container {
@@ -22,16 +22,15 @@
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
 }
 
-/* Hamburger button (Desktop pe hidden) */
 .hamburger-btn {
   display: none;
   flex-direction: column;
   justify-content: space-around;
-  width: 26px;
-  height: 20px;
+  width: 24px;
+  height: 18px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -46,7 +45,7 @@
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #1a2074;
   text-decoration: none;
@@ -63,37 +62,49 @@
 .nav-primary-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
 }
 
-/* Link underline fix: ONLY active class gets the border */
 .nav-primary-item {
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #414146;
   padding: 24px 0;
-  border-bottom: 3px solid transparent; /* default no underline */
+  border-bottom: 3px solid transparent;
   transition: all 0.2s ease;
 }
 
-.nav-primary-item:hover {
-  color: #1a2074;
-}
-
+.nav-primary-item:hover,
 .nav-primary-item.active {
   color: #1a2074;
-  border-bottom: 3px solid #1a2074; /* ONLY active route gets underline */
+  border-bottom: 3px solid #1a2074;
+}
+
+.nav-link-btn {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #414146;
+  padding: 24px 0;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link-btn:hover {
+  color: #1a2074;
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .nav-secondary-item {
-  font-size: 14px;
+  font-size: 13px;
   color: #414146;
   cursor: pointer;
   font-weight: 500;
@@ -111,11 +122,11 @@
   background: transparent;
   border: 1px solid #1a2074;
   color: #1a2074;
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.2s ease;
 }
 
@@ -127,11 +138,11 @@
 .user-profile-menu {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .user-greeting {
-  font-size: 14px;
+  font-size: 13px;
   color: #1a2074;
 }
 
@@ -139,12 +150,11 @@
   background: transparent;
   border: 1px solid #ff4d4f;
   color: #ff4d4f;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .logout-btn:hover {
@@ -153,7 +163,7 @@
 }
 
 /* ======================================================== */
-/* MOBILE SIDE DRAWER CSS (Screens below 850px)            */
+/* MOBILE DRAWER STYLES                                     */
 /* ======================================================== */
 .drawer-backdrop {
   position: fixed;
@@ -176,7 +186,7 @@
   box-shadow: 2px 0 10px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.3s ease;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -189,7 +199,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -209,9 +219,9 @@
 
 .drawer-user-info {
   background: #f0f5ff;
-  padding: 12px;
+  padding: 10px;
   border-radius: 6px;
-  margin-top: 15px;
+  margin-top: 14px;
 }
 
 .drawer-user-info p {
@@ -234,55 +244,50 @@
 .drawer-links {
   list-style: none;
   padding: 0;
-  margin: 20px 0 0 0;
+  margin: 16px 0 0 0;
   flex: 1;
+  overflow-y: auto;
 }
 
 .drawer-links li {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.drawer-link {
+.drawer-link,
+.drawer-link-btn {
   text-decoration: none;
-  font-size: 16px;
-  font-weight: 600;
-  color: #414146;
-  display: block;
-  padding: 10px;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.drawer-link.active,
-.drawer-link:hover {
-  background: #f0f5ff;
-  color: #1a2074;
-}
-
-.drawer-action-btn {
-  background: transparent;
-  border: none;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #414146;
   display: block;
   width: 100%;
   text-align: left;
-  padding: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drawer-link:hover,
+.drawer-link-btn:hover {
+  background: #f0f5ff;
+  color: #1a2074;
 }
 
 .drawer-footer {
-  padding-top: 15px;
+  padding-top: 14px;
   border-top: 1px solid #f0f0f0;
 }
 
 .drawer-login-btn,
 .drawer-logout-btn {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   border-radius: 6px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -298,8 +303,8 @@
   border: 1px solid #ff4d4f;
 }
 
-/* Responsive Media Query */
-@media (max-width: 850px) {
+/* Screen width < 900px: Hide desktop links, show hamburger */
+@media (max-width: 900px) {
   .hamburger-btn {
     display: flex;
   }

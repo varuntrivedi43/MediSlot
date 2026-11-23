@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ServiceCards from './components/ServiceCards';
@@ -15,46 +15,65 @@ import './index.css';
 
 /**
  * Home Component
- * Intelligent UX:
- * 1. If searching -> Immediately displays Doctor Cards right below search box.
- * 2. If idle/browsing -> Displays explore cards, articles, and symptoms.
+ * Automatically switches to COMPACT search mode when typing,
+ * putting the doctor card directly in view!
  */
-const Home = ({ currentUser }) => {
+const Home = ({ currentUser, activeNavCategory, onClearNavCategory }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  // Flag: Kya user kuch actively search kar raha hai?
+  // Sync category if clicked from Navbar (e.g., Video Consult, Lab Tests)
+  useEffect(() => {
+    if (activeNavCategory) {
+      setSelectedCategory(activeNavCategory);
+    }
+  }, [activeNavCategory]);
+
   const isSearchActive = searchTerm.trim().length > 0 || selectedCategory.trim().length > 0;
+
+  const handleResetSearch = () => {
+    setSearchTerm('');
+    setSelectedCategory('');
+    if (onClearNavCategory) onClearNavCategory();
+  };
 
   return (
     <div>
+      {/* Hero section: Becomes compact when searching */}
       <Hero 
         searchTerm={searchTerm} 
         setSearchTerm={setSearchTerm} 
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
+        isCompact={isSearchActive}
       />
 
-      {/* SEARCH IS ACTIVE: Doctors are shown IMMEDIATELY right here */}
       {isSearchActive ? (
-        <div style={{ backgroundColor: '#f8f9fa', padding: '20px 0', minHeight: '60vh' }}>
-          <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+        /* SEARCH ACTIVE: Doctor list is right at the top */
+        <div style={{ backgroundColor: '#f8f9fa', padding: '16px 0', minHeight: '60vh' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 16px' }}>
             <button 
-              onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
+              type="button"
+              onClick={handleResetSearch}
               style={{
                 background: '#ffffff',
-                border: '1px solid #d3d3d3',
-                padding: '8px 16px',
-                borderRadius: '20px',
+                border: '1px solid #c9cce8',
+                padding: '6px 14px',
+                borderRadius: '16px',
                 cursor: 'pointer',
                 fontWeight: '600',
                 color: '#1a2074',
-                marginBottom: '10px'
+                fontSize: '13px',
+                marginBottom: '12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
               ← Back to Explore All Services
             </button>
           </div>
+          
           <DoctorList 
             searchTerm={searchTerm} 
             selectedCategory={selectedCategory} 
@@ -62,14 +81,13 @@ const Home = ({ currentUser }) => {
           />
         </div>
       ) : (
-        /* IDLE / EXPLORE MODE: Full Practo Landing Experience */
+        /* IDLE MODE: Full Practo Marketing Landing */
         <>
           <ServiceCards />
           <Specialties />
           <Articles />
           <Testimonials />
           
-          {/* Default Doctors preview at the bottom */}
           <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '20px' }}>
             <DoctorList 
               searchTerm="" 
@@ -87,8 +105,9 @@ function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [activeNavCategory, setActiveNavCategory] = useState('');
 
-  // Restore user session on refresh
+  // Persist user session from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('medislot_user');
     if (savedUser) {
@@ -100,10 +119,7 @@ function App() {
     }
   }, []);
 
-  const handleLoginSuccess = (user) => {
-    setCurrentUser(user);
-  };
-
+  const handleLoginSuccess = (user) => setCurrentUser(user);
   const handleLogout = () => {
     localStorage.removeItem('medislot_user');
     setCurrentUser(null);
@@ -117,18 +133,27 @@ function App() {
           onOpenLogin={() => setIsAuthOpen(true)} 
           onLogout={handleLogout}
           onOpenHelp={() => setIsHelpOpen(true)}
+          onSelectNavCategory={(cat) => setActiveNavCategory(cat)}
         />
         
         <main style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<Home currentUser={currentUser} />} />
+            <Route 
+              path="/" 
+              element={
+                <Home 
+                  currentUser={currentUser} 
+                  activeNavCategory={activeNavCategory}
+                  onClearNavCategory={() => setActiveNavCategory('')}
+                />
+              } 
+            />
             <Route path="/bookings" element={<Bookings />} />
           </Routes>
         </main>
 
         <Footer onOpenHelp={() => setIsHelpOpen(true)} />
 
-        {/* Modal Dialogs */}
         {isAuthOpen && (
           <AuthModal 
             onClose={() => setIsAuthOpen(false)} 
